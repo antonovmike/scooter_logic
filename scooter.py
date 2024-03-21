@@ -1,3 +1,5 @@
+from abc import ABC, abstractmethod
+
 import logging
 
 logging.basicConfig(
@@ -19,8 +21,21 @@ class Scooter:
 
 # Interface Segregation Principle
 # Different types of users interacting with the scooter system
-# Create explicit interfaces for better clarity and adherence to ISP?
-class Client:
+class ClientInterface(ABC):
+    @abstractmethod
+    def rent_scooter(self, scooter):
+        """Rent a scooter."""
+        pass
+
+
+class EmployeeInterface(ABC):
+    @abstractmethod
+    def service_scooter(self, scooter):
+        """Service a scooter."""
+        pass
+
+
+class Client(ClientInterface):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
@@ -29,7 +44,7 @@ class Client:
         self.logger.info("Scooter rented by client")
 
 
-class Employee:
+class Employee(EmployeeInterface):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
