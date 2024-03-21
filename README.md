@@ -10,10 +10,10 @@ Status:
 - rented
 - low battery
 - out of service
-- lost
+- lost 
 Client:
 - customer
-- employee
+- employee 
 Rental:
 - regular
 - discounted
