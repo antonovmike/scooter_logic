@@ -43,6 +43,10 @@ class Client(ClientInterface):
         scooter.change_status("rented")
         self.logger.info("Scooter rented by client")
 
+    def free_scooter(self, scooter):
+        scooter.change_status("available")
+        self.logger.info("Scooter is available")
+
 
 class Employee(EmployeeInterface):
     def __init__(self):

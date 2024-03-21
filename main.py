@@ -27,8 +27,12 @@ service_rental = ServiceRental(scooter)
 rental_system = RentalSystem(regular_rental)
 rental_system.rent()
 
+scooter = Scooter("reserved")
+
 rental_system = RentalSystem(discounted_rental)
 rental_system.rent()
 
 rental_system = RentalSystem(service_rental)
 rental_system.rent()
+
+client.free_scooter(scooter)
