@@ -11,9 +11,11 @@ Status:
 - low battery
 - out of service
 - lost 
+
 Client:
 - customer
 - employee 
+
 Rental:
 - regular
 - discounted
