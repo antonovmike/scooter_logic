@@ -6,7 +6,7 @@ logging.basicConfig(
 
 
 # Single Responsibility Principle
-# encapsulate scooter's state and behavior
+# It handles the scooter’s status and encapsulates scooter's state and behavior
 class Scooter:
     def __init__(self, status):
         self.status = status
@@ -17,8 +17,9 @@ class Scooter:
         self.logger.info(f"Scooter status changed to {new_status}")
 
 
-# different types of users interacting with the scooter system
 # Interface Segregation Principle
+# Different types of users interacting with the scooter system
+# Create explicit interfaces for better clarity and adherence to ISP?
 class Client:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
