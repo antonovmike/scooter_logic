@@ -34,3 +34,5 @@ rental_system.rent()
 
 rental_system = RentalSystem(service_rental)
 rental_system.rent()
+
+scooter.change_status("available")
