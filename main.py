@@ -34,5 +34,3 @@ rental_system.rent()
 
 rental_system = RentalSystem(service_rental)
 rental_system.rent()
-
-client.free_scooter(scooter)

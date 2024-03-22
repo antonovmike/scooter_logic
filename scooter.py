@@ -9,6 +9,8 @@ logging.basicConfig(
 
 # Single Responsibility Principle
 # It handles the scooter’s status and encapsulates scooter's state and behavior
+# Open-Closed principle
+# It is possible to extend it with new subclasses
 class Scooter:
     def __init__(self, status):
         self.status = status
@@ -35,6 +37,10 @@ class EmployeeInterface(ABC):
         pass
 
 
+# Single Responsibility Principle
+# Both have just one responsibility
+# Open-Closed principle
+# Both can be subclassed to add more behavior
 class Client(ClientInterface):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -42,10 +48,6 @@ class Client(ClientInterface):
     def rent_scooter(self, scooter):
         scooter.change_status("rented")
         self.logger.info("Scooter rented by client")
-
-    def free_scooter(self, scooter):
-        scooter.change_status("available")
-        self.logger.info("Scooter is available")
 
 
 class Employee(EmployeeInterface):
