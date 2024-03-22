@@ -7,16 +7,6 @@ logging.basicConfig(
 )
 
 
-class ScooterStatus:
-    def __init__(self, status):
-        self.status = status
-        self.logger = logging.getLogger(__name__)
-
-    def change_status(self, new_status):
-        self.status = new_status
-        self.logger.info(f"Scooter status changed to {new_status}")
-
-
 # Single Responsibility Principle
 # It handles the scooter’s status and encapsulates scooter's state and behavior
 # Open-Closed principle
