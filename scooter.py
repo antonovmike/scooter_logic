@@ -18,6 +18,9 @@ class Scooter:
         self.status = new_status
         self.logger.info(f"Scooter status changed to {new_status}")
 
+    def is_available(self):
+        return self.status == ScooterStatus.AVAILABLE
+
 
 class ScooterStatus:
     AVAILABLE = "available"
