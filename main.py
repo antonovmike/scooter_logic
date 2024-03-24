@@ -6,10 +6,11 @@ from scooter import (
     DiscountedRental,
     RentalSystem,
     ServiceRental,
+    ScooterStatus,
 )
 
 # Example Usage
-scooter = Scooter("available")
+scooter = Scooter(ScooterStatus.AVAILABLE)
 client = Client()
 employee = Employee()
 
@@ -27,7 +28,7 @@ service_rental = ServiceRental(scooter)
 rental_system = RentalSystem(regular_rental)
 rental_system.rent()
 
-scooter = Scooter("reserved")
+scooter = Scooter(ScooterStatus.RESERVED)
 
 rental_system = RentalSystem(discounted_rental)
 rental_system.rent()
@@ -35,4 +36,4 @@ rental_system.rent()
 rental_system = RentalSystem(service_rental)
 rental_system.rent()
 
-scooter.change_status("available")
+scooter.change_status(ScooterStatus.AVAILABLE)
