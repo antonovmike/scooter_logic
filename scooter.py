@@ -9,8 +9,6 @@ logging.basicConfig(
 
 # Single Responsibility Principle
 # It handles the scooter’s status and encapsulates scooter's state and behavior
-# Open-Closed principle
-# It is possible to extend it with new subclasses
 class Scooter:
     def __init__(self, status):
         self.status = status
@@ -19,6 +17,16 @@ class Scooter:
     def change_status(self, new_status):
         self.status = new_status
         self.logger.info(f"Scooter status changed to {new_status}")
+
+
+class ScooterStatus:
+    AVAILABLE = "available"
+    RESERVED = "reserved"
+    RENTED = "rented"
+    LOW_BATTERY = "low battery"
+    MALFUNCTION = "malfunction"
+    SERVICE = "service"
+    LOST = "lost"
 
 
 # Interface Segregation Principle
@@ -37,10 +45,6 @@ class EmployeeInterface(ABC):
         pass
 
 
-# Single Responsibility Principle
-# Both have just one responsibility
-# Open-Closed principle
-# Both can be subclassed to add more behavior
 class Client(ClientInterface):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -69,12 +73,12 @@ class Rental:
 
 class RegularRental(Rental):
     def rent(self):
-        self.scooter.change_status("rented")
+        self.scooter.change_status(ScooterStatus.RENTED)
 
 
 class DiscountedRental(Rental):
     def rent(self):
-        self.scooter.change_status("rented")
+        self.scooter.change_status(ScooterStatus.RENTED)
 
 
 # Dependency Inversion Principle
@@ -84,7 +88,7 @@ class DiscountedRental(Rental):
 # modifying the client or employee classes.
 class ServiceRental(Rental):
     def rent(self):
-        self.scooter.change_status("service")
+        self.scooter.change_status(ScooterStatus.SERVICE)
 
 
 class RentalSystem:
