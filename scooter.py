@@ -2,9 +2,10 @@ from abc import ABC, abstractmethod
 
 import logging
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
+# logging.basicConfig(
+#     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+# )
+logging.basicConfig(level=logging.INFO, format="%(levelname)s - %(message)s")
 
 
 # Single Responsibility Principle
@@ -32,6 +33,7 @@ class ScooterStatus:
     LOST = "lost"
 
 
+# Dependency Inversion Principle
 class CurrentStatus(ABC):
     @abstractmethod
     def check_status(self, scooter):
@@ -70,7 +72,7 @@ class Client(ClientInterface):
             scooter.change_status(ScooterStatus.RENTED)
             self.logger.info("Scooter rented by client")
         else:
-            self.logger.error(f"Error: scooter is unavailable")
+            self.logger.error(f"Scooter is unavailable")
 
 
 class Employee(EmployeeInterface):
@@ -79,15 +81,14 @@ class Employee(EmployeeInterface):
 
     def service_scooter(self, scooter, status_checker):
         if status_checker:
-            self.logger.info("Unawailable for service. rented by client")
-        else:
             scooter.change_status("service")
             self.logger.info("Scooter serviced by employee")
+        else:
+            self.logger.error("Unawailable for service: rented by client")
 
 
 # Liskov Substitution Principle
-# These classes will inherit from a common Rental base class,
-# allowing them to be used interchangeably
+# These classes will inherit from a common Rental base class, allowing them to be used interchangeably
 class Rental:
     def __init__(self, scooter):
         self.scooter = scooter
@@ -104,10 +105,8 @@ class DiscountedRental(Rental):
 
 
 # Dependency Inversion Principle
-# Interface for the rental system depends on abstractions (Rental)
-# rather than concrete implementations.
-# This allows us to easily swap out rental types without
-# modifying the client or employee classes.
+# Interface for the rental system depends on abstractions (Rental) rather than concrete implementations.
+# This allows us to easily swap out rental types without modifying the client or employee classes.
 class ServiceRental(Rental):
     def rent(self):
         self.scooter.change_status(ScooterStatus.SERVICE)
