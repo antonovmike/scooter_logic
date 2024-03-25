@@ -32,18 +32,31 @@ class ScooterStatus:
     LOST = "lost"
 
 
+class CurrentStatus(ABC):
+    @abstractmethod
+    def check_status(self, scooter):
+        pass
+
+
+class ScooterStatusChecker(CurrentStatus):
+    def check_status(self, scooter):
+        current_status = scooter.status
+        scooter.logger.info(f"Scooter status is {current_status}")
+        return current_status
+
+
 # Interface Segregation Principle
 # Different types of users interacting with the scooter system
 class ClientInterface(ABC):
     @abstractmethod
-    def rent_scooter(self, scooter):
+    def rent_scooter(self, scooter, status_checker):
         """Rent a scooter."""
         pass
 
 
 class EmployeeInterface(ABC):
     @abstractmethod
-    def service_scooter(self, scooter):
+    def service_scooter(self, scooter, status_checker):
         """Service a scooter."""
         pass
 
@@ -52,18 +65,24 @@ class Client(ClientInterface):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-    def rent_scooter(self, scooter):
-        scooter.change_status("rented")
-        self.logger.info("Scooter rented by client")
+    def rent_scooter(self, scooter, status_checker):
+        if status_checker:
+            scooter.change_status(ScooterStatus.RENTED)
+            self.logger.info("Scooter rented by client")
+        else:
+            self.logger.error(f"Error: scooter is unavailable")
 
 
 class Employee(EmployeeInterface):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-    def service_scooter(self, scooter):
-        scooter.change_status("service")
-        self.logger.info("Scooter serviced by employee")
+    def service_scooter(self, scooter, status_checker):
+        if status_checker:
+            self.logger.info("Unawailable for service. rented by client")
+        else:
+            scooter.change_status("service")
+            self.logger.info("Scooter serviced by employee")
 
 
 # Liskov Substitution Principle

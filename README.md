@@ -24,3 +24,6 @@ Which SOLID principles are being used in each section:
 
 # RentalSystem Class:
 - SRP: The RentalSystem class is responsible for handling rentals. Its rent method delegates the actual rental behavior to the injected rental object (which can be any of the subclasses). This separation of concerns adheres to the SRP.
+
+# CurrentStatus Class:
+- DIP: CurrentStatus is an abstraction that defines a check_status method that must be implemented in concrete classes. ScooterStatusChecker implements the CurrentStatus interface by providing a concrete implementation of the check_status method that checks the status of the scooter and logs it. Thus, you can easily replace ScooterStatusChecker with any other CurrentStatus implementation without changing the code that uses CurrentStatus. This follows the principle of abstraction dependency, allowing your code to be more flexible and easily extensible.
