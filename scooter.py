@@ -72,7 +72,7 @@ class Client(ClientInterface):
             scooter.change_status(ScooterStatus.RENTED)
             self.logger.info("Scooter rented by client")
         else:
-            self.logger.error(f"Scooter is unavailable")
+            self.logger.error(f"Scooter is unavailable: {scooter.status}")
 
 
 class Employee(EmployeeInterface):
@@ -84,7 +84,7 @@ class Employee(EmployeeInterface):
             scooter.change_status("service")
             self.logger.info("Scooter serviced by employee")
         else:
-            self.logger.error("Unawailable for service: rented by client")
+            self.logger.error(f"Unawailable for service: {scooter.status}")
 
 
 # Liskov Substitution Principle
