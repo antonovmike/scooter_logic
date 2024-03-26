@@ -34,7 +34,6 @@ class TestClient(unittest.TestCase):
         self.status_checker = ScooterStatusChecker()
 
     def test_rent_scooter(self):
-        # This test assumes that the scooter is available and the status checker allows renting
         self.client.rent_scooter(self.scooter, self.status_checker)
         self.assertEqual(self.scooter.status, ScooterStatus.RENTED)
 
@@ -70,5 +69,5 @@ class TestRental(unittest.TestCase):
         self.assertEqual(self.scooter.status, ScooterStatus.SERVICE)
 
 
-# class TestRentalManager(unittest.TestCase):
-#     pass
+class TestRentalManager(unittest.TestCase):
+    pass
