@@ -27,3 +27,7 @@ Which SOLID principles are being used in each section:
 
 # CurrentStatus Class:
 - DIP: CurrentStatus is an abstraction that defines a check_status method that must be implemented in concrete classes. ScooterStatusChecker implements the CurrentStatus interface by providing a concrete implementation of the check_status method that checks the status of the scooter and logs it. Thus, you can easily replace ScooterStatusChecker with any other CurrentStatus implementation without changing the code that uses CurrentStatus. This follows the principle of abstraction dependency, allowing your code to be more flexible and easily extensible.
+
+# RentalManager Class:
+- SRP: It has just one responsibility: managing the rental process. It determines the type of rental based on the time of day and creates the appropriate Rental instance. 
+- OCP: To add a new type of rental, we can extend the Rental class and update the create_rental_instance method in RentalManager to handle the new rental type. 
