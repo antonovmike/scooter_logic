@@ -70,4 +70,5 @@ class TestRental(unittest.TestCase):
 
 
 class TestRentalManager(unittest.TestCase):
-    pass
+    def setUp(self):
+        self.rental_manager = RentalManager()
