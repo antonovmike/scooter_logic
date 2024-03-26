@@ -72,7 +72,7 @@ class Client(ClientInterface):
             scooter.change_status(ScooterStatus.RENTED)
             self.logger.info("Scooter rented by client")
         else:
-            self.logger.error(f"Scooter is unavailable: {scooter.status}")
+            self.logger.error(f"Scooter is unavailable for rent: {scooter.status}")
 
 
 class Employee(EmployeeInterface):
