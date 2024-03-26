@@ -69,37 +69,15 @@ class EmployeeInterface(ABC):
         pass
 
 
-# class Client(ClientInterface):
-#     def __init__(self):
-#         self.logger = logging.getLogger(__name__)
-
-#     def rent_scooter(self, scooter, status_checker):
-#         if status_checker:
-#             scooter.change_status(ScooterStatus.RENTED)
-#             self.logger.info("Scooter rented by client")
-#         else:
-#             self.logger.error(f"Scooter is unavailable for rent: {scooter.status}")
-
-
-class Client(ClientInterface):
+class RentalManager:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-    def rent_scooter(self, scooter, status_checker):
-        # Determine the type of rental based on the time of day
-        rental_type = self.determine_rental_type()
-        # Create the appropriate Rental subclass instance
-        rental = self.create_rental_instance(rental_type, scooter)
-        # Use the Rental instance to rent the scooter
-        rental.rent()
-        self.logger.info("Scooter rented by client")
-
     def determine_rental_type(self):
-        # Example logic to determine the rental type based on the time of day
         current_hour = datetime.now().hour
-        if 6 <= current_hour < 18:  # Morning and evening
+        if 6 <= current_hour < 18:
             return RentType.REGULAR
-        else:  # Night and middle of the day
+        else:
             return RentType.DISCOUNTED
 
     def create_rental_instance(self, rental_type, scooter):
@@ -109,6 +87,23 @@ class Client(ClientInterface):
             return DiscountedRental(scooter)
         else:
             raise ValueError("Invalid rental type")
+
+
+class Client(ClientInterface):
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
+        self.rental_manager = RentalManager()
+
+    def rent_scooter(self, scooter, status_checker):
+        if status_checker:
+            # Use RentalManager to determine the rental type and create the Rental instance
+            rental_type = self.rental_manager.determine_rental_type()
+            rental = self.rental_manager.create_rental_instance(rental_type, scooter)
+            # Use the Rental instance to rent the scooter
+            rental.rent()
+            self.logger.info("Scooter rented by client")
+        else:
+            self.logger.error(f"Scooter is unavailable for rent: {scooter.status}")
 
 
 class Employee(EmployeeInterface):
