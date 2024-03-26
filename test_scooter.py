@@ -72,3 +72,13 @@ class TestRental(unittest.TestCase):
 class TestRentalManager(unittest.TestCase):
     def setUp(self):
         self.rental_manager = RentalManager()
+
+    def test_determine_rental_type(self):
+        current_hour = datetime.now().hour
+
+        if 6 <= current_hour < 18:
+            expect_rent_type = RentType.REGULAR
+        else:
+            expect_rent_type = RentType.DISCOUNTED
+
+        self.assertEqual(self.rental_manager.determine_rental_type(), expect_rent_type)
