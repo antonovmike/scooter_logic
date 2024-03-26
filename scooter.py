@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from datetime import datetime
 
 import logging
 
@@ -33,6 +34,11 @@ class ScooterStatus:
     LOST = "lost"
 
 
+class RentType:
+    REGULAR = "regular"
+    DISCOUNTED = "discounted"
+
+
 # Dependency Inversion Principle
 class CurrentStatus(ABC):
     @abstractmethod
@@ -63,16 +69,46 @@ class EmployeeInterface(ABC):
         pass
 
 
+# class Client(ClientInterface):
+#     def __init__(self):
+#         self.logger = logging.getLogger(__name__)
+
+#     def rent_scooter(self, scooter, status_checker):
+#         if status_checker:
+#             scooter.change_status(ScooterStatus.RENTED)
+#             self.logger.info("Scooter rented by client")
+#         else:
+#             self.logger.error(f"Scooter is unavailable for rent: {scooter.status}")
+
+
 class Client(ClientInterface):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
     def rent_scooter(self, scooter, status_checker):
-        if status_checker:
-            scooter.change_status(ScooterStatus.RENTED)
-            self.logger.info("Scooter rented by client")
+        # Determine the type of rental based on the time of day
+        rental_type = self.determine_rental_type()
+        # Create the appropriate Rental subclass instance
+        rental = self.create_rental_instance(rental_type, scooter)
+        # Use the Rental instance to rent the scooter
+        rental.rent()
+        self.logger.info("Scooter rented by client")
+
+    def determine_rental_type(self):
+        # Example logic to determine the rental type based on the time of day
+        current_hour = datetime.now().hour
+        if 6 <= current_hour < 18:  # Morning and evening
+            return RentType.REGULAR
+        else:  # Night and middle of the day
+            return RentType.DISCOUNTED
+
+    def create_rental_instance(self, rental_type, scooter):
+        if rental_type == RentType.REGULAR:
+            return RegularRental(scooter)
+        elif rental_type == RentType.DISCOUNTED:
+            return DiscountedRental(scooter)
         else:
-            self.logger.error(f"Scooter is unavailable for rent: {scooter.status}")
+            raise ValueError("Invalid rental type")
 
 
 class Employee(EmployeeInterface):
