@@ -3,20 +3,24 @@ from datetime import datetime
 
 import logging
 
-# logging.basicConfig(
-#     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-# )
 logging.basicConfig(level=logging.INFO, format="%(levelname)s - %(message)s")
 
 
+class InvalidScooterStatusError(Exception):
+    """Raised when an invalid scooter status is attempted to be set."""
+
+    pass
+
+
 # Single Responsibility Principle
-# It handles the scooter’s status and encapsulates scooter's state and behavior
 class Scooter:
     def __init__(self, status):
         self.status = status
         self.logger = logging.getLogger(__name__)
 
     def change_status(self, new_status):
+        if new_status not in ScooterStatus.__dict__.values():
+            raise InvalidScooterStatusError(f"Invalid status: {new_status}")
         self.status = new_status
         self.logger.info(f"Scooter status changed to {new_status}")
 
@@ -136,8 +140,6 @@ class DiscountedRental(Rental):
 
 
 # Dependency Inversion Principle
-# Interface for the rental system depends on abstractions (Rental) rather than concrete implementations.
-# This allows us to easily swap out rental types without modifying the client or employee classes.
 class ServiceRental(Rental):
     def rent(self):
         self.scooter.change_status(ScooterStatus.SERVICE)

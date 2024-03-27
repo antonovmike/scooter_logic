@@ -12,6 +12,7 @@ from scooter import (
     RegularRental,
     DiscountedRental,
     ServiceRental,
+    InvalidScooterStatusError,
 )
 
 
@@ -25,6 +26,10 @@ class TestScooter(unittest.TestCase):
 
     def test_is_available(self):
         self.assertTrue(self.scooter.is_available())
+
+    def test_invalid_status_raises_exception(self):
+        with self.assertRaises(InvalidScooterStatusError):
+            self.scooter.change_status("invalid_status")
 
 
 class TestClient(unittest.TestCase):
