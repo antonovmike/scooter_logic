@@ -5,6 +5,8 @@ A simple illustration for my short article "[How can applying the SOLID principl
 
 ![SOLID](https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fc84v1ezup6sw856i0xgl.jpeg)
 
+An article about developing this app: "[How to put SOLID principles into practice](https://dev.to/antonov_mike/how-to-put-solid-principles-into-practice-3jn3)"
+
 Which SOLID principles are being used in each section:
 
 # Scooter Class
