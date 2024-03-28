@@ -1,7 +1,5 @@
 from scooter import (
     Scooter,
-    Client,
-    Employee,
     RegularRental,
     DiscountedRental,
     RentalSystem,
@@ -9,6 +7,8 @@ from scooter import (
     ScooterStatus,
     ScooterStatusChecker,
 )
+
+from client import Client, Employee
 
 # Example Usage
 scooter = Scooter(ScooterStatus.AVAILABLE)

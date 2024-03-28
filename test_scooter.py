@@ -7,13 +7,12 @@ from scooter import (
     ScooterStatusChecker,
     RentType,
     RentalManager,
-    Client,
-    Employee,
     RegularRental,
     DiscountedRental,
     ServiceRental,
     InvalidScooterStatusError,
 )
+from client import Client, Employee
 
 
 class TestScooter(unittest.TestCase):
