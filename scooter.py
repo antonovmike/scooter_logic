@@ -99,15 +99,20 @@ class Client(ClientInterface):
         self.rental_manager = RentalManager()
 
     def rent_scooter(self, scooter, status_checker):
-        if status_checker:
-            # Use RentalManager to determine the rental type and create the Rental instance
-            rental_type = self.rental_manager.determine_rental_type()
-            rental = self.rental_manager.create_rental_instance(rental_type, scooter)
-            # Use the Rental instance to rent the scooter
-            rental.rent()
-            self.logger.info("Scooter rented by client")
-        else:
-            self.logger.error(f"Scooter is unavailable for rent: {scooter.status}")
+        try:
+            if status_checker:
+                # Use RentalManager to determine the rental type and create the Rental instance
+                rental_type = self.rental_manager.determine_rental_type()
+                rental = self.rental_manager.create_rental_instance(
+                    rental_type, scooter
+                )
+                # Use the Rental instance to rent the scooter
+                rental.rent()
+                self.logger.info("Scooter rented by client")
+            else:
+                self.logger.error(f"Scooter is unavailable for rent: {scooter.status}")
+        except Exception as e:
+            self.logger.error(f"An error occurred while renting the scooter: {e}")
 
 
 class Employee(EmployeeInterface):
