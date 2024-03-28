@@ -1,11 +1,8 @@
-import logging
-
 from abc import ABC, abstractmethod
 from datetime import datetime
 
 from rental import Rental, RegularRental, DiscountedRental, ServiceRental, RentType
-
-logging.basicConfig(level=logging.INFO, format="%(levelname)s - %(message)s")
+from logging_setup import log
 
 
 class RentalSystem:
@@ -18,7 +15,7 @@ class RentalSystem:
 
 class RentalManager:
     def __init__(self):
-        self.logger = logging.getLogger(__name__)
+        self.logger = log
 
     def determine_rental_type(self):
         current_hour = datetime.now().hour

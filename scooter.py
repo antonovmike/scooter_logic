@@ -1,9 +1,7 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 
-import logging
-
-logging.basicConfig(level=logging.INFO, format="%(levelname)s - %(message)s")
+from logging_setup import log
 
 
 class InvalidScooterStatusError(Exception):
@@ -16,7 +14,7 @@ class InvalidScooterStatusError(Exception):
 class Scooter:
     def __init__(self, status):
         self.status = status
-        self.logger = logging.getLogger(__name__)
+        self.logger = log
 
     def change_status(self, new_status):
         if new_status not in ScooterStatus.__dict__.values():

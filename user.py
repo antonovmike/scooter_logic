@@ -1,9 +1,7 @@
-import logging
 from abc import ABC, abstractmethod
 
 from rental import RentalManager
-
-logging.basicConfig(level=logging.INFO, format="%(levelname)s - %(message)s")
+from logging_setup import log
 
 
 class UserInterface(ABC):
@@ -15,8 +13,8 @@ class UserInterface(ABC):
 
 class Client(UserInterface):
     def __init__(self):
-        self.logger = logging.getLogger(__name__)
         self.rental_manager = RentalManager()
+        self.logger = log
 
     def take_scooter(self, scooter, status_checker):
         try:
@@ -37,7 +35,7 @@ class Client(UserInterface):
 
 class Employee(UserInterface):
     def __init__(self):
-        self.logger = logging.getLogger(__name__)
+        self.logger = log
 
     def take_scooter(self, scooter, status_checker):
         if status_checker:
