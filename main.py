@@ -4,7 +4,7 @@ from scooter import (
     ScooterStatusChecker,
 )
 
-from client import Client, Employee
+from user import Client, Employee
 
 # Example Usage
 scooter = Scooter(ScooterStatus.AVAILABLE)

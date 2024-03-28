@@ -8,7 +8,7 @@ from scooter import (
     ScooterStatusChecker,
     InvalidScooterStatusError,
 )
-from client import Client, Employee
+from user import Client, Employee
 from rental import (
     RentType,
     RentalManager,

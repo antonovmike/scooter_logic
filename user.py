@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 
 from rental import RentalManager
 
-
 logging.basicConfig(level=logging.INFO, format="%(levelname)s - %(message)s")
 
 
@@ -22,12 +21,12 @@ class Client(UserInterface):
     def take_scooter(self, scooter, status_checker):
         try:
             if status_checker:
-                # Use RentalManager to determine the rental type and create the Rental instance
+                # The RentalManager to determine rental type and create Rental instance
                 rental_type = self.rental_manager.determine_rental_type()
                 rental = self.rental_manager.create_rental_instance(
                     rental_type, scooter
                 )
-                # Use the Rental instance to rent the scooter
+                # The Rental instance to rent the scooter
                 rental.rent()
                 self.logger.info("Scooter rented by client")
             else:

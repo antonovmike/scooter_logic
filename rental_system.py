@@ -3,14 +3,17 @@ import logging
 from abc import ABC, abstractmethod
 from datetime import datetime
 
-from scooter import ScooterStatus
+from rental import Rental, RegularRental, DiscountedRental, ServiceRental, RentType
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s - %(message)s")
 
 
-class RentType:
-    REGULAR = "regular"
-    DISCOUNTED = "discounted"
+class RentalSystem:
+    def __init__(self, rental):
+        self.rental = rental
+
+    def rent(self):
+        self.rental.rent()
 
 
 class RentalManager:
@@ -31,25 +34,3 @@ class RentalManager:
             return DiscountedRental(scooter)
         else:
             raise ValueError("Invalid rental type")
-
-
-# Liskov Substitution Principle
-class Rental:
-    def __init__(self, scooter):
-        self.scooter = scooter
-
-
-class RegularRental(Rental):
-    def rent(self):
-        self.scooter.change_status(ScooterStatus.RENTED)
-
-
-class DiscountedRental(Rental):
-    def rent(self):
-        self.scooter.change_status(ScooterStatus.RENTED)
-
-
-# Dependency Inversion Principle
-class ServiceRental(Rental):
-    def rent(self):
-        self.scooter.change_status(ScooterStatus.SERVICE)
