@@ -1,9 +1,5 @@
 from scooter import (
     Scooter,
-    RegularRental,
-    DiscountedRental,
-    RentalSystem,
-    ServiceRental,
     ScooterStatus,
     ScooterStatusChecker,
 )

@@ -1,18 +1,21 @@
 import unittest
 from unittest.mock import patch
 from datetime import datetime
+
 from scooter import (
     Scooter,
     ScooterStatus,
     ScooterStatusChecker,
+    InvalidScooterStatusError,
+)
+from client import Client, Employee
+from rental import (
     RentType,
     RentalManager,
     RegularRental,
     DiscountedRental,
     ServiceRental,
-    InvalidScooterStatusError,
 )
-from client import Client, Employee
 
 
 class TestScooter(unittest.TestCase):

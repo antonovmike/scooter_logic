@@ -1,8 +1,8 @@
+import logging
 from abc import ABC, abstractmethod
 
-from scooter import RentalManager
+from rental import RentalManager
 
-import logging
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s - %(message)s")
 
