@@ -41,7 +41,7 @@ class TestClient(unittest.TestCase):
         self.status_checker = ScooterStatusChecker()
 
     def test_rent_scooter(self):
-        self.client.rent_scooter(self.scooter, self.status_checker)
+        self.client.take_scooter(self.scooter, self.status_checker)
         self.assertEqual(self.scooter.status, ScooterStatus.RENTED)
 
 
@@ -52,7 +52,7 @@ class TestEmployee(unittest.TestCase):
         self.status_checker = ScooterStatusChecker()
 
     def test_service_scooter(self):
-        self.employee.service_scooter(self.scooter, self.status_checker)
+        self.employee.take_scooter(self.scooter, self.status_checker)
         self.assertEqual(self.scooter.status, ScooterStatus.SERVICE)
 
 

@@ -7,26 +7,19 @@ from rental import RentalManager
 logging.basicConfig(level=logging.INFO, format="%(levelname)s - %(message)s")
 
 
-class ClientInterface(ABC):
+class UserInterface(ABC):
     @abstractmethod
-    def rent_scooter(self, scooter, status_checker):
-        """Rent a scooter."""
+    def take_scooter(self, scooter, status_checker):
+        """Blocks the ability to rent or service"""
         pass
 
 
-class EmployeeInterface(ABC):
-    @abstractmethod
-    def service_scooter(self, scooter, status_checker):
-        """Service a scooter."""
-        pass
-
-
-class Client(ClientInterface):
+class Client(UserInterface):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
         self.rental_manager = RentalManager()
 
-    def rent_scooter(self, scooter, status_checker):
+    def take_scooter(self, scooter, status_checker):
         try:
             if status_checker:
                 # Use RentalManager to determine the rental type and create the Rental instance
@@ -43,11 +36,11 @@ class Client(ClientInterface):
             self.logger.error(f"An error occurred while renting the scooter: {e}")
 
 
-class Employee(EmployeeInterface):
+class Employee(UserInterface):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-    def service_scooter(self, scooter, status_checker):
+    def take_scooter(self, scooter, status_checker):
         if status_checker:
             scooter.change_status("service")
             self.logger.info("Scooter serviced by employee")
