@@ -13,7 +13,7 @@ class InvalidScooterStatusError(Exception):
 class Scooter:
     def __init__(self, status, battery_level=100):
         self.status = status
-        self.battery_level = battery_level # Initialize battery level
+        self.battery_level = battery_level
         self.logger = log
 
     def change_status(self, new_status):
