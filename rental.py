@@ -25,12 +25,12 @@ class RentalManager:
             return RentType.DISCOUNTED
 
     def create_rental_instance(self, rental_type, scooter):
-        if rental_type == RentType.REGULAR:
+        if rental_type == RentType.SERVICED:
+            return ServiceRental(scooter)
+        elif rental_type == RentType.REGULAR:
             return RegularRental(scooter)
         elif rental_type == RentType.DISCOUNTED:
             return DiscountedRental(scooter)
-        elif rental_type == RentType.SERVICED:
-            return ServiceRental(scooter)
         else:
             raise ValueError("Invalid rental type")
 
