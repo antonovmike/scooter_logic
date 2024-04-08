@@ -1,7 +1,8 @@
 from datetime import datetime
 
-from scooter import ScooterStatus
 from logging_setup import log
+from rental_system import RentalSystem
+from scooter import ScooterStatus
 
 
 class RentType:
@@ -25,39 +26,25 @@ class RentalManager:
 
     def create_rental_instance(self, rental_type, scooter):
         if rental_type == RentType.REGULAR:
-            self.logger.info("===> REGULAR")
             return RegularRental(scooter)
         elif rental_type == RentType.DISCOUNTED:
-            self.logger.info("===> DISCOUNTED")
             return DiscountedRental(scooter)
         elif rental_type == RentType.SERVICED:
-            self.logger.info("===> SERVICED")
             return ServiceRental(scooter)
         else:
             raise ValueError("Invalid rental type")
 
 
-# Liskov Substitution Principle
-class Rental:
-    def __init__(self, scooter):
-        self.logger = log
-        self.scooter = scooter
-
-
-class RegularRental(Rental):
+class RegularRental(RentalSystem):
     def rent(self):
-        self.logger.info("===> RegularRental")
         self.scooter.change_status(ScooterStatus.RENTED)
 
 
-class DiscountedRental(Rental):
+class DiscountedRental(RentalSystem):
     def rent(self):
-        self.logger.info("===> DiscountedRental")
         self.scooter.change_status(ScooterStatus.RENTED)
 
 
-# Dependency Inversion Principle
-class ServiceRental(Rental):
+class ServiceRental(RentalSystem):
     def rent(self):
-        self.logger.info("===> ServiceRental")
         self.scooter.change_status(ScooterStatus.SERVICE)
