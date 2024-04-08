@@ -8,13 +8,7 @@ from scooter import (
     InvalidScooterStatusError,
 )
 from user import Client, Employee
-from rental import (
-    RentType,
-    RentalManager,
-    RegularRental,
-    DiscountedRental,
-    ServiceRental,
-)
+from rental_system import DiscountedRental, RegularRental, RentType, RentalSystem, ServiceRental
 
 
 class TestScooter(unittest.TestCase):
@@ -77,7 +71,7 @@ class TestRental(unittest.TestCase):
 
 class TestRentalManager(unittest.TestCase):
     def setUp(self):
-        self.rental_manager = RentalManager()
+        self.rental_system = RentalSystem(scooter=None)
 
     def test_determine_rental_type(self):
         current_hour = datetime.now().hour
@@ -87,4 +81,4 @@ class TestRentalManager(unittest.TestCase):
         else:
             expect_rent_type = RentType.DISCOUNTED
 
-        self.assertEqual(self.rental_manager.determine_rental_type(user_is_employee=False), expect_rent_type)
+        self.assertEqual(self.rental_system.determine_rental_type(user_is_employee=False), expect_rent_type)

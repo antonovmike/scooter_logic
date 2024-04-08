@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
-from rental import RentalManager
+# from rental import RentalManager
+from rental_system import RentalSystem
 from logging_setup import log
 
 
@@ -13,15 +14,15 @@ class UserInterface(ABC):
 
 class Client(UserInterface):
     def __init__(self):
-        self.rental_manager = RentalManager()
+        self.rental_system = RentalSystem(scooter=None)
         self.logger = log
 
     def take_scooter(self, scooter, status_checker):
         try:
             if status_checker:
                 # The RentalManager to determine rental type and create Rental instance
-                rental_type = self.rental_manager.determine_rental_type(user_is_employee=False)
-                rental = self.rental_manager.create_rental_instance(
+                rental_type = self.rental_system.determine_rental_type(user_is_employee=False)
+                rental = self.rental_system.create_rental_instance(
                     rental_type, scooter
                 )
                 # The Rental instance to rent the scooter
@@ -35,15 +36,15 @@ class Client(UserInterface):
 
 class Employee(UserInterface):
     def __init__(self):
-        self.rental_manager = RentalManager()
+        self.rental_system = RentalSystem(scooter=None)
         self.logger = log
 
     def take_scooter(self, scooter, status_checker):
         try:
             if status_checker:
                 # The RentalManager to determine rental type and create Rental instance
-                rental_type = self.rental_manager.determine_rental_type(user_is_employee=True)
-                rental = self.rental_manager.create_rental_instance(
+                rental_type = self.rental_system.determine_rental_type(user_is_employee=True)
+                rental = self.rental_system.create_rental_instance(
                     rental_type, scooter
                 )
                 # The Rental instance to service the scooter
