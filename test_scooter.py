@@ -47,7 +47,7 @@ class TestClient(unittest.TestCase):
 class TestEmployee(unittest.TestCase):
     def setUp(self):
         self.employee = Employee()
-        self.scooter = Scooter(ScooterStatus.RENTED)
+        self.scooter = Scooter(ScooterStatus.SERVICE)
         self.status_checker = ScooterStatusChecker()
 
     def test_service_scooter(self):
@@ -87,4 +87,4 @@ class TestRentalManager(unittest.TestCase):
         else:
             expect_rent_type = RentType.DISCOUNTED
 
-        self.assertEqual(self.rental_manager.determine_rental_type(), expect_rent_type)
+        self.assertEqual(self.rental_manager.determine_rental_type(user_is_employee=False), expect_rent_type)

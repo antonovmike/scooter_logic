@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from rental import Rental, RegularRental, DiscountedRental, ServiceRental, RentType
+from rental import RegularRental, DiscountedRental, RentType
 from logging_setup import log
 
 
