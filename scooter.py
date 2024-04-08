@@ -23,6 +23,7 @@ class Scooter:
         self.logger.info(f"Scooter status changed to {new_status}")
 
     def is_available(self):
+        self.logger.info(f"Scooter battery level {self.battery_level}")
         return self.status == ScooterStatus.AVAILABLE and self.battery_level >= 20
     
     def battery(self):
