@@ -11,8 +11,9 @@ class InvalidScooterStatusError(Exception):
 
 # Single Responsibility Principle
 class Scooter:
-    def __init__(self, status):
+    def __init__(self, status, battery_level=100):
         self.status = status
+        self.battery_level = battery_level # Initialize battery level
         self.logger = log
 
     def change_status(self, new_status):
@@ -22,7 +23,20 @@ class Scooter:
         self.logger.info(f"Scooter status changed to {new_status}")
 
     def is_available(self):
-        return self.status == ScooterStatus.AVAILABLE
+        return self.status == ScooterStatus.AVAILABLE and self.battery_level >= 20
+    
+    def battery(self):
+        return self.battery_level
+
+    def charge_battery(self):
+        self.battery_level = 100
+        self.logger.info("Battery fully charged")
+
+    def decrease_battery(self, percentage):
+        self.battery_level -= percentage
+        if self.battery_level < 0:
+            self.battery_level = 0
+        self.logger.info(f"Battery level decreased by {percentage}% to {self.battery_level}%")
 
 
 class ScooterStatus:
