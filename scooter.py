@@ -41,12 +41,12 @@ class Scooter:
 
 class ScooterStatus:
     AVAILABLE = "available"
-    RESERVED = "reserved"
-    RENTED = "rented"
+    LOST = "lost"
     LOW_BATTERY = "low battery"
     MALFUNCTION = "malfunction"
+    RESERVED = "reserved"
+    RENTED = "rented"
     SERVICE = "service"
-    LOST = "lost"
 
 
 # Dependency Inversion Principle
