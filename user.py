@@ -54,9 +54,3 @@ class Employee(UserInterface):
         except Exception as e:
             self.logger.error(f"An error occurred while renting the scooter: {e}")
 
-    # def take_scooter(self, scooter, status_checker):
-    #     if status_checker:
-    #         scooter.change_status("service")
-    #         self.logger.info("Scooter serviced by employee")
-    #     else:
-    #         self.logger.error(f"Unawailable for service: {scooter.status}")
