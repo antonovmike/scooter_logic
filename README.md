@@ -7,6 +7,19 @@ A simple illustration for my short article "[How can applying the SOLID principl
 
 An article about developing this app: "[How to put SOLID principles into practice](https://dev.to/antonov_mike/how-to-put-solid-principles-into-practice-3jn3)"
 
+Run script:
+```
+python main.py
+```
+Run framework:
+```
+uvicorn web.main:app --reload
+```
+Run tests:
+```
+python -m unittest scooter/test_scooter.py
+```
+
 # Which SOLID principles are being used in each section:
 
 ## Scooter Class

@@ -31,13 +31,13 @@ class Scooter:
 
     def charge_battery(self):
         self.battery_level = 100
-        self.logger.info("⚡️Battery fully charged")
+        self.logger.info("Battery fully charged")
 
     def decrease_battery(self, percentage):
         self.battery_level -= percentage
         if self.battery_level < 0:
             self.battery_level = 0
-        self.logger.info(f"⚡️Battery level decreased by {percentage}% to {self.battery_level}%")
+        self.logger.info(f"Battery level decreased by {percentage}% to {self.battery_level}%")
 
 
 class ScooterStatus:
