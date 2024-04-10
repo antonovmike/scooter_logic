@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from scooter.rental_system import RentalSystem
+from scooter.scooter import battery_crytical
 from logging_setup import log
 
 
@@ -31,7 +32,7 @@ class Client(UserInterface):
         self.logger = log
 
     def take_scooter(self, scooter, status_checker):
-        if scooter.battery() > 20:
+        if scooter.battery() >= battery_crytical:
             rental_type = self.rental_system.determine_rental_type(user_is_employee=False)
             if self._take_scooter(scooter, status_checker, rental_type, "Scooter rented by client"):
                 scooter.decrease_battery(15)

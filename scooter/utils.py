@@ -4,7 +4,7 @@ from logging_setup import log
 from scooter.scooter import (
     Scooter,
     ScooterStatus,
-    ScooterStatusChecker,
+    ScooterStatusChecker
 )
 
 from scooter.user import Client, Employee

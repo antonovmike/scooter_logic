@@ -3,10 +3,23 @@ from abc import ABC, abstractmethod
 from logging_setup import log
 
 
+battery_crytical = 80
+
+
 class InvalidScooterStatusError(Exception):
     """Raised when an invalid scooter status is attempted to be set."""
 
     pass
+
+
+class ScooterStatus:
+    AVAILABLE = "available"
+    LOST = "lost"
+    LOW_BATTERY = "low battery"
+    MALFUNCTION = "malfunction"
+    RESERVED = "reserved"
+    RENTED = "rented"
+    SERVICE = "service"
 
 
 # Single Responsibility Principle
@@ -23,9 +36,8 @@ class Scooter:
         self.logger.info(f"Scooter status changed to {new_status}")
 
     def is_available(self):
-        # self.logger.info(f"Scooter battery level {self.battery_level}")
-        return self.status == ScooterStatus.AVAILABLE and self.battery_level >= 20
-    
+        return self.status == ScooterStatus.AVAILABLE and self.battery_level >= battery_crytical
+
     def battery(self):
         return self.battery_level
 
@@ -37,17 +49,11 @@ class Scooter:
         self.battery_level -= percentage
         if self.battery_level < 0:
             self.battery_level = 0
+        if self.battery_level <= battery_crytical:
+            self.logger.info(f"! Battery level = {self.battery_level}%")
+            self.change_status(ScooterStatus.LOW_BATTERY)
+
         self.logger.info(f"Battery level decreased by {percentage}% to {self.battery_level}%")
-
-
-class ScooterStatus:
-    AVAILABLE = "available"
-    LOST = "lost"
-    LOW_BATTERY = "low battery"
-    MALFUNCTION = "malfunction"
-    RESERVED = "reserved"
-    RENTED = "rented"
-    SERVICE = "service"
 
 
 # Dependency Inversion Principle
@@ -60,5 +66,5 @@ class CurrentStatus(ABC):
 class ScooterStatusChecker(CurrentStatus):
     def check_status(self, scooter):
         current_status = scooter.status
-        scooter.logger.info(f"Scooter status is {current_status}")
+
         return current_status
