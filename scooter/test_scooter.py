@@ -20,7 +20,7 @@ class TestScooter(unittest.TestCase):
         self.assertEqual(self.scooter.status, ScooterStatus.RENTED)
 
     def test_is_available(self):
-        self.assertTrue(self.scooter.is_available())
+        self.assertTrue(self.scooter.is_available(False))
 
     def test_invalid_status_raises_exception(self):
         with self.assertRaises(InvalidScooterStatusError):

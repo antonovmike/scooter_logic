@@ -11,9 +11,9 @@ class UserInterface(ABC):
         """Blocks the ability to rent or service"""
         pass
 
-    def _take_scooter(self, scooter, status_checker, rental_type, action_description):
+    def _take_scooter(self, scooter, status_checker, rental_type, action_description, user_is_employee: bool):
         try:
-            if status_checker and scooter.is_available():
+            if status_checker:
                 rental = self.rental_system.create_rental_instance(rental_type, scooter)
                 rental.rent()
                 self.logger.info(action_description)
@@ -30,21 +30,30 @@ class Client(UserInterface):
     def __init__(self):
         self.rental_system = RentalSystem(scooter=None)
         self.logger = log
+        self.user_is_employee = False
 
     def take_scooter(self, scooter, status_checker):
         if scooter.battery() >= battery_crytical:
-            rental_type = self.rental_system.determine_rental_type(user_is_employee=False)
-            if self._take_scooter(scooter, status_checker, rental_type, "Scooter rented by client"):
+            rental_type = self.rental_system.determine_rental_type(self.user_is_employee)
+            if self._take_scooter(
+                    scooter, status_checker, rental_type, 
+                    "Scooter rented by client", self.user_is_employee
+                    ):
                 scooter.decrease_battery(15)
         else:
             self.logger.error("Scooter battery is too low for renting")
+
 
 class Employee(UserInterface):
     def __init__(self):
         self.rental_system = RentalSystem(scooter=None)
         self.logger = log
+        self.user_is_employee = True
 
     def take_scooter(self, scooter, status_checker):
-        rental_type = self.rental_system.determine_rental_type(user_is_employee=True)
-        if self._take_scooter(scooter, status_checker, rental_type, "Scooter serviced by employee"):
+        rental_type = self.rental_system.determine_rental_type(self.user_is_employee)
+        if self._take_scooter(
+                scooter, status_checker, rental_type, 
+                "Scooter serviced by employee", self.user_is_employee
+                ):
             scooter.charge_battery()
