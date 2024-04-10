@@ -2,6 +2,7 @@ import unittest
 from datetime import datetime
 
 from scooter.scooter import (
+    Battery,
     Scooter,
     ScooterStatus,
     ScooterStatusChecker,
@@ -13,7 +14,8 @@ from scooter.rental_system import DiscountedRental, RegularRental, RentType, Ren
 
 class TestScooter(unittest.TestCase):
     def setUp(self):
-        self.scooter = Scooter(ScooterStatus.AVAILABLE)
+        self.battery = Battery(100)
+        self.scooter = Scooter(ScooterStatus.AVAILABLE, self.battery)
 
     def test_change_status(self):
         self.scooter.change_status(ScooterStatus.RENTED)
@@ -27,10 +29,27 @@ class TestScooter(unittest.TestCase):
             self.scooter.change_status("invalid_status")
 
 
+class TestBattery(unittest.TestCase):
+    def setUp(self):
+        self.battery = Battery(100)
+        self.scooter = Scooter(ScooterStatus.AVAILABLE, self.battery)
+
+    def test_battery_level(self):
+        self.assertEqual(self.scooter.get_battery_level(), 100)
+        self.scooter.decrease_battery(20)
+        self.assertEqual(self.scooter.get_battery_level(), 80)
+
+    def test_charge_battery(self):
+        self.scooter.decrease_battery(20)
+        self.scooter.charge_battery()
+        self.assertEqual(self.scooter.get_battery_level(), 100)
+
+
 class TestClient(unittest.TestCase):
     def setUp(self):
         self.client = Client()
-        self.scooter = Scooter(ScooterStatus.AVAILABLE)
+        self.battery = Battery(100)
+        self.scooter = Scooter(ScooterStatus.AVAILABLE, self.battery)
         self.status_checker = ScooterStatusChecker()
 
     def test_rent_scooter(self):
@@ -41,17 +60,19 @@ class TestClient(unittest.TestCase):
 class TestEmployee(unittest.TestCase):
     def setUp(self):
         self.employee = Employee()
-        self.scooter = Scooter(ScooterStatus.SERVICE)
+        self.battery = Battery(100)
+        self.scooter = Scooter(ScooterStatus.SERVICE, self.battery)
         self.status_checker = ScooterStatusChecker()
 
     def test_service_scooter(self):
         self.employee.take_scooter(self.scooter, self.status_checker)
-        self.assertEqual(self.scooter.status, ScooterStatus.SERVICE)
+        self.assertEqual(self.scooter.status, ScooterStatus.SERVICE, self.battery)
 
 
 class TestRental(unittest.TestCase):
     def setUp(self):
-        self.scooter = Scooter(ScooterStatus.AVAILABLE)
+        self.battery = Battery(100)
+        self.scooter = Scooter(ScooterStatus.AVAILABLE, self.battery)
 
     def test_regular_rental(self):
         rental = RegularRental(self.scooter)
@@ -81,4 +102,7 @@ class TestRentalManager(unittest.TestCase):
         else:
             expect_rent_type = RentType.DISCOUNTED
 
-        self.assertEqual(self.rental_system.determine_rental_type(user_is_employee=False), expect_rent_type)
+        self.assertEqual(
+            self.rental_system.determine_rental_type(user_is_employee=False), 
+            expect_rent_type
+            )

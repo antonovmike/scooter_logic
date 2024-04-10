@@ -33,7 +33,7 @@ class Client(UserInterface):
         self.user_is_employee = False
 
     def take_scooter(self, scooter, status_checker):
-        if scooter.battery() >= battery_crytical:
+        if scooter.get_battery_level() >= battery_crytical:
             rental_type = self.rental_system.determine_rental_type(self.user_is_employee)
             if self._take_scooter(
                     scooter, status_checker, rental_type, 

@@ -22,11 +22,29 @@ class ScooterStatus:
     SERVICE = "service"
 
 
-# Single Responsibility Principle
+class Battery:
+    def __init__(self, level=100):
+        self.level = level
+
+    def charge(self):
+        self.level = 100
+        print("Battery fully charged")
+
+    def decrease(self, percentage):
+        self.level -= percentage
+        if self.level < 0:
+            self.level = 0
+        if self.level <= battery_crytical:
+            print(f"! Battery level = {self.level}%")
+
+    def get_level(self):
+        return self.level
+
+
 class Scooter:
-    def __init__(self, status, battery_level=100):
+    def __init__(self, status, battery: Battery):
         self.status = status
-        self.battery_level = battery_level
+        self.battery = battery
         self.logger = log
 
     def change_status(self, new_status):
@@ -39,24 +57,16 @@ class Scooter:
         if user_is_employee and self.status != ScooterStatus.RENTED:
             return self.status == ScooterStatus.AVAILABLE
         elif not user_is_employee:
-            return self.status == ScooterStatus.AVAILABLE and self.battery_level >= battery_crytical
+            return self.status == ScooterStatus.AVAILABLE and self.get_battery_level() >= battery_crytical
 
-    def battery(self):
-        return self.battery_level
+    def get_battery_level(self):
+        return self.battery.get_level()
 
     def charge_battery(self):
-        self.battery_level = 100
-        self.logger.info("Battery fully charged")
+        self.battery.charge()
 
     def decrease_battery(self, percentage):
-        self.battery_level -= percentage
-        if self.battery_level < 0:
-            self.battery_level = 0
-        if self.battery_level <= battery_crytical:
-            self.logger.info(f"! Battery level = {self.battery_level}%")
-            self.change_status(ScooterStatus.LOW_BATTERY)
-
-        self.logger.info(f"Battery level decreased by {percentage}% to {self.battery_level}%")
+        self.battery.decrease(percentage)
 
 
 # Dependency Inversion Principle
