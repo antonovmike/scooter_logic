@@ -23,7 +23,7 @@ class Scooter:
         self.logger.info(f"Scooter status changed to {new_status}")
 
     def is_available(self):
-        self.logger.info(f"Scooter battery level {self.battery_level}")
+        # self.logger.info(f"Scooter battery level {self.battery_level}")
         return self.status == ScooterStatus.AVAILABLE and self.battery_level >= 20
     
     def battery(self):
@@ -31,13 +31,13 @@ class Scooter:
 
     def charge_battery(self):
         self.battery_level = 100
-        self.logger.info("Battery fully charged")
+        self.logger.info("⚡️Battery fully charged")
 
     def decrease_battery(self, percentage):
         self.battery_level -= percentage
         if self.battery_level < 0:
             self.battery_level = 0
-        self.logger.info(f"Battery level decreased by {percentage}% to {self.battery_level}%")
+        self.logger.info(f"⚡️Battery level decreased by {percentage}% to {self.battery_level}%")
 
 
 class ScooterStatus:

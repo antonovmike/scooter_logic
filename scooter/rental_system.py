@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from scooter import ScooterStatus
+from scooter.scooter import ScooterStatus
 
 
 class RentType:

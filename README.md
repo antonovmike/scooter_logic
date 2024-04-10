@@ -42,11 +42,8 @@ Contains the Scooter, ScooterStatus, InvalidScooterStatusError, and ScooterStatu
 ## user.py:
 Contains the Client, Employee, and UserInterface classes. This module will be responsible for client and employee interaction with the rental system.
 
-## rental.py: 
-Includes the Rental, RegularRental, DiscountedRental, ServiceRental, and RentalManager classes. This module will handle the scooter rental logic, including defining the rental type and creating rental instances.
-
 ## rental_system.py: 
-Contains the RentalSystem class that will be used to manage the rental process.
+Contains the RentalSystem class that will be used to manage the rental process. Includes the Rental, RegularRental, DiscountedRental, ServiceRental, and RentalManager classes. This module will handle the scooter rental logic, including defining the rental type and creating rental instances.
 
 ## utils.py: 
 Can contain common utils such as logging configuration if used in multiple locations.

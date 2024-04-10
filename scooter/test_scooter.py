@@ -1,14 +1,14 @@
 import unittest
 from datetime import datetime
 
-from scooter import (
+from scooter.scooter import (
     Scooter,
     ScooterStatus,
     ScooterStatusChecker,
     InvalidScooterStatusError,
 )
-from user import Client, Employee
-from rental_system import DiscountedRental, RegularRental, RentType, RentalSystem, ServiceRental
+from scooter.user import Client, Employee
+from scooter.rental_system import DiscountedRental, RegularRental, RentType, RentalSystem, ServiceRental
 
 
 class TestScooter(unittest.TestCase):

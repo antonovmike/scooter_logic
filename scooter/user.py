@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from rental_system import RentalSystem
+from scooter.rental_system import RentalSystem
 from logging_setup import log
 
 
