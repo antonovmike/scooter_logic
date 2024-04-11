@@ -13,7 +13,8 @@ async def root():
 
 @app.get("/rent", status_code=status.HTTP_204_NO_CONTENT)
 async def rent():
-    client.take_scooter(scooter, scooter.is_available(False))
+    qwe = client.take_scooter(scooter, scooter.is_available(False))
+    print(qwe) # None
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 

@@ -11,7 +11,10 @@ class UserInterface(ABC):
         """Blocks the ability to rent or service"""
         pass
 
-    def _take_scooter(self, scooter, status_checker, rental_type, action_description, user_is_employee: bool):
+    def _take_scooter(
+            self, scooter, status_checker, rental_type, 
+            action_description, user_is_employee: bool
+            ):
         try:
             if status_checker:
                 rental = self.rental_system.create_rental_instance(rental_type, scooter)

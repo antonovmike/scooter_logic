@@ -15,7 +15,7 @@ python main.py
 ```
 Run framework:
 ```
-uvicorn web.main:app --reload
+uvicorn app.main:app --reload
 ```
 Run tests:
 ```
