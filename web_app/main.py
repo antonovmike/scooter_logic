@@ -1,5 +1,4 @@
-# Import "fastapi" could not be resolved PylancereportMissingImports
-from fastapi import FastAPI, Response, status # type: ignore
+from fastapi import FastAPI, Response, status
 
 from scooter.utils import ScooterStatus, scooter, client, employee
 

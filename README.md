@@ -7,6 +7,8 @@ A simple illustration for my short article "[How can applying the SOLID principl
 
 An article about developing this app: "[How to put SOLID principles into practice](https://dev.to/antonov_mike/how-to-put-solid-principles-into-practice-3jn3)"
 
+[FastAPI testing tutorial](https://fastapi.tiangolo.com/tutorial/testing/)
+
 Run script:
 ```
 python main.py
@@ -17,7 +19,13 @@ uvicorn web.main:app --reload
 ```
 Run tests:
 ```
-python -m unittest scooter/test_scooter.py
+pytest
+```
+```
+pytest scooter/test_scooter.py
+```
+```
+pytest web_app/test_main.py
 ```
 
 # Which SOLID principles are being used in each section:
