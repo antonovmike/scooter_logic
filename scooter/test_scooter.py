@@ -28,6 +28,11 @@ class TestScooter(unittest.TestCase):
         with self.assertRaises(InvalidScooterStatusError):
             self.scooter.change_status("invalid_status")
 
+    def test_low_battery_status(self):
+        scooter = Scooter(ScooterStatus.AVAILABLE, Battery(50))
+        scooter.change_status(ScooterStatus.LOW_BATTERY)
+        self.assertEqual(scooter.status, ScooterStatus.LOW_BATTERY)
+
 
 class TestBattery(unittest.TestCase):
     def setUp(self):

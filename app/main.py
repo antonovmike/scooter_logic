@@ -16,7 +16,6 @@ async def rent():
     scooter_status = client.take_scooter(scooter, scooter.is_available(False))
     print(scooter_status)
     return {"message": scooter_status}
-    # return JSONResponse(content={"message": "rented"})
 
 
 @app.get("/service")
