@@ -25,7 +25,7 @@ pytest
 pytest scooter/test_scooter.py
 ```
 ```
-pytest web_app/test_main.py
+pytest app/test_main.py
 ```
 
 # Which SOLID principles are being used in each section:
