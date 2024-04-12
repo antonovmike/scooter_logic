@@ -15,9 +15,7 @@ async def root():
 async def rent():
     scooter_status = client.take_scooter(scooter, scooter.is_available(False))
     print(scooter_status)
-    # return Response(scooter_status)
-    return {"status": scooter.status}
-    # return Response(status_code=status.HTTP_204_NO_CONTENT)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @app.get("/service", status_code=status.HTTP_204_NO_CONTENT)
