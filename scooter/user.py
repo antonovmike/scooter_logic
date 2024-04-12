@@ -35,7 +35,7 @@ class Client(UserInterface):
         self.logger = log
         self.user_is_employee = False
 
-    def take_scooter(self, scooter, status_checker):
+    def take_scooter(self, scooter, status_checker) -> bool:
         if scooter.get_battery_level() >= battery_crytical:
             rental_type = self.rental_system.determine_rental_type(self.user_is_employee)
             if self._take_scooter(
@@ -43,8 +43,11 @@ class Client(UserInterface):
                     "Scooter rented by client", self.user_is_employee
                     ):
                 scooter.decrease_battery(15)
+                return scooter.status
+            return scooter.status
         else:
             self.logger.error("Scooter battery is too low for renting")
+            return scooter.status
 
 
 class Employee(UserInterface):
@@ -53,10 +56,13 @@ class Employee(UserInterface):
         self.logger = log
         self.user_is_employee = True
 
-    def take_scooter(self, scooter, status_checker):
+    def take_scooter(self, scooter, status_checker) -> bool:
         rental_type = self.rental_system.determine_rental_type(self.user_is_employee)
         if self._take_scooter(
                 scooter, status_checker, rental_type, 
                 "Scooter serviced by employee", self.user_is_employee
                 ):
             scooter.charge_battery()
+            return scooter.status
+        else:
+            return scooter.status

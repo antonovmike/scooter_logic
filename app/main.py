@@ -13,18 +13,22 @@ async def root():
 
 @app.get("/rent", status_code=status.HTTP_204_NO_CONTENT)
 async def rent():
-    qwe = client.take_scooter(scooter, scooter.is_available(False))
-    print(qwe) # None
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
+    scooter_status = client.take_scooter(scooter, scooter.is_available(False))
+    print(scooter_status)
+    # return Response(scooter_status)
+    return {"status": scooter.status}
+    # return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @app.get("/service", status_code=status.HTTP_204_NO_CONTENT)
 async def service():
-    employee.take_scooter(scooter, scooter.is_available(True))
+    scooter_status = employee.take_scooter(scooter, scooter.is_available(True))
+    print(scooter_status)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @app.get("/free", status_code=status.HTTP_204_NO_CONTENT)
 async def free():
-    scooter.change_status(ScooterStatus.AVAILABLE)
+    scooter_status = scooter.change_status(ScooterStatus.AVAILABLE)
+    print(scooter_status)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

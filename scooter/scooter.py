@@ -52,9 +52,18 @@ class Scooter:
             raise InvalidScooterStatusError(f"Invalid status: {new_status}")
         self.status = new_status
         self.logger.info(f"Scooter status changed to {new_status}")
+        if self.battery.get_level() <= battery_crytical:
+            self.status = ScooterStatus.LOW_BATTERY
+            return self.status
+        if new_status == ScooterStatus.AVAILABLE:
+            return self.status
+        else:
+            return self.status
 
     def is_available(self, user_is_employee: bool):
-        if user_is_employee and self.status != ScooterStatus.RENTED:
+        if self.get_battery_level() <= battery_crytical:
+            return self.status == ScooterStatus.LOW_BATTERY
+        elif user_is_employee and self.status != ScooterStatus.RENTED:
             return self.status == ScooterStatus.AVAILABLE
         elif not user_is_employee:
             return self.status == ScooterStatus.AVAILABLE and self.get_battery_level() >= battery_crytical

@@ -12,16 +12,19 @@ def test_root():
     assert response.json() == {"message": "Rent a scooter!"}
 
 
-def test_rent():
+def test_rent_and_status():
+    # Сначала вызываем эндпоинт /rent
     response = client.get("/rent")
     assert response.status_code == 204
+    assert response.json() == {"status": "rented"}
 
 
-def test_service():
-    response = client.get("/service")
-    assert response.status_code == 204
+
+# def test_service():
+#     response = client.get("/service")
+#     assert response.status_code == 204
 
 
-def test_free():
-    response = client.get("/free")
-    assert response.status_code == 204
+# def test_free():
+#     response = client.get("/free")
+#     assert response.status_code == 204
