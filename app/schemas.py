@@ -19,6 +19,9 @@ class UsersModel(BaseModel):
     is_user_employee: bool = True
     user_id: int
 
+    class Config:
+        orm_mode = True
+
 
 class EmployeeModel(BaseModel):
     id: int
@@ -26,16 +29,25 @@ class EmployeeModel(BaseModel):
     phone: str
     date: datetime
 
+    class Config:
+        orm_mode = True
+
 
 class CustomerModel(BaseModel):
     id: int
     name: str
     phone: str
 
+    class Config:
+        orm_mode = True
+
 
 class ScooterModel(BaseModel):
     id: int
     status: str
+
+    class Config:
+        orm_mode = True
 
 
 class ScooterLogModel(BaseModel):
@@ -44,3 +56,6 @@ class ScooterLogModel(BaseModel):
     action_type: str
     user_id: int
     scooter_id: int
+
+    class Config:
+        orm_mode = True
