@@ -48,6 +48,7 @@ class Scooter(Base):
     __tablename__ = "scooter"
 
     id = Column(Integer, primary_key=True, nullable=False)
+    model = Column(String, nullable=False)
     status = Column(String, nullable=False)
 
 

@@ -50,6 +50,7 @@ class VehicleBase(BaseModel):
 
 
 class ScooterModel(VehicleBase):
+    model: str
     status: str
 
 
