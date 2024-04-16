@@ -13,18 +13,18 @@ def test_root():
 
 
 def test_rent():
-    response = client.get("/rent")
+    response = client.get("/rent/rent")
     assert response.status_code == 200
     assert response.json() == {"message": ScooterStatus.RENTED}
 
 
 def test_free():
-    response = client.get("/free")
+    response = client.get("/rent/free")
     assert response.status_code == 200
     assert response.json() == {"message": ScooterStatus.AVAILABLE}
 
 
 def test_service():
-    response = client.get("/service")
+    response = client.get("/rent/service")
     assert response.status_code == 200
     assert response.json() == {"message": ScooterStatus.SERVICE}
