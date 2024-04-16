@@ -13,41 +13,44 @@ Customer and employee should be in different tables, as their data may differ.
 For example, an employee may have a position and a qualification level
 """
 
-
-class UsersModel(BaseModel):
+class UserBase(BaseModel):
     id: int
     is_user_employee: bool = True
     user_id: int
+
+class UserCreate(UserBase):
+    pass
+
+class UserOut(UserBase):
+    created_at: datetime
 
     class Config:
         orm_mode = True
 
 
-class EmployeeModel(BaseModel):
+class EmployeeModel(UserBase):
     id: int
     name: str
     phone: str
     date: datetime
 
-    class Config:
-        orm_mode = True
 
-
-class CustomerModel(BaseModel):
+class CustomerModel(UserBase):
     id: int
     name: str
     phone: str
-
-    class Config:
-        orm_mode = True
+    date: datetime
 
 
-class ScooterModel(BaseModel):
+class VehicleBase(BaseModel):
     id: int
-    status: str
 
     class Config:
         orm_mode = True
+
+
+class ScooterModel(VehicleBase):
+    status: str
 
 
 class ScooterLogModel(BaseModel):
