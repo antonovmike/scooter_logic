@@ -17,7 +17,7 @@ For example, an employee may have a position and a qualification level
 class UserBase(BaseModel):
     name: str
     phone: str
-    # password: str
+    password: str
     is_user_employee: bool = True
 
 class UserCreate(UserBase):
