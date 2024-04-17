@@ -1,5 +1,9 @@
 from fastapi import APIRouter
-# from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from app.database import get_db
+from app.routers.scooters import update_scooter_status
+from app.schemas import ScooterUpdate
 
 router = APIRouter()
 
@@ -14,22 +18,26 @@ router = APIRouter(
 )
 
 
-@router.get("/rent")
-async def rent():
-    scooter_status = client.take_scooter(scooter, scooter.is_available(False))
-    print(scooter_status)
-    return {"message": scooter_status}
+@router.get("/rent/{scooter_id}")
+async def rent(scooter_id: int, db: Session = Depends(get_db)):
 
+    scooter_update = ScooterUpdate(status="rented")
+    update_scooter_status(scooter_id, scooter_update, db)
 
-@router.get("/service")
-async def service():
-    scooter_status = employee.take_scooter(scooter, scooter.is_available(True))
-    print(scooter_status)
-    return {"message": scooter_status}
+    return {"message": f"Scooter {scooter_id} is now rented"}
 
+@router.get("/service/{scooter_id}")
+async def service(scooter_id: int, db: Session = Depends(get_db)):
 
-@router.get("/free")
-async def free():
-    scooter_status = scooter.change_status(ScooterStatus.AVAILABLE)
-    print(scooter_status)
-    return {"message": scooter_status}
+    scooter_update = ScooterUpdate(status="service")
+    update_scooter_status(scooter_id, scooter_update, db)
+
+    return {"message": f"Scooter {scooter_id} is now in service"}
+
+@router.get("/free/{scooter_id}")
+async def free(scooter_id: int, db: Session = Depends(get_db)):
+
+    scooter_update = ScooterUpdate(status="available")
+    update_scooter_status(scooter_id, scooter_update, db)
+
+    return {"message": f"Scooter {scooter_id} is now available"}
