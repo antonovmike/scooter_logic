@@ -30,24 +30,15 @@ class UserOut(UserBase):
         from_attributes = True
 
 
-class VehicleBase(BaseModel):
-    id: int
-
-    class Config:
-        from_attributes = True
-
-
-class ScooterModel(VehicleBase):
+class ScooterBase(BaseModel):
     model: str
     status: str
 
+class ScooterCreate(ScooterBase):
+    pass
 
-class ScooterLogModel(BaseModel):
-    id: int
-    action_date: datetime
-    action_type: str
-    user_id: int
-    scooter_id: int
+class ScooterOut(ScooterBase):
+    created_at: datetime
 
     class Config:
         from_attributes = True

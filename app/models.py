@@ -29,11 +29,13 @@ class User(Base):
 
 
 class Scooter(Base):
-    __tablename__ = "scooter"
+    __tablename__ = "scooters"
 
     id = Column(Integer, primary_key=True, nullable=False)
     model = Column(String, nullable=False)
     status = Column(String, nullable=False)
+    created_at = Column(TIMESTAMP(timezone=True), 
+                        server_default=text('now()'), nullable=False)
 
 
 class ScooterLog(Base):
