@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models import Scooter
-from scooter.scooter import Battery, ScooterStatus, Scooter as ScooterLogic
+from scooter.scooter import Battery, ScooterStatus, Scooter as ScooterLogic, battery_crytical
 
 router = APIRouter()
 
@@ -32,15 +32,20 @@ async def rent(scooter_id: int, db: Session = Depends(get_db)):
     battery = Battery(level=scooter.battery_level)
     scooter_logic = ScooterLogic(scooter.status, battery)
 
+    if scooter_logic.battery.get_level() <= battery_crytical:
+        raise HTTPException(status_code=400, detail="Scooter battery level is too low to rent")
+
     try:
         scooter_logic.change_status(ScooterStatus.RENTED)
     except InvalidScooterStatusError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
     scooter.status = scooter_logic.status
+    scooter.battery_level = scooter_logic.battery.get_level()
     db.commit()
 
     return {"message": f"Scooter {scooter_id} is now rented"}
+
 
 @router.get("/service/{scooter_id}")
 async def service(scooter_id: int, db: Session = Depends(get_db)):
@@ -57,6 +62,7 @@ async def service(scooter_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail=str(e))
 
     scooter.status = scooter_logic.status
+    scooter.battery_level = scooter_logic.battery.get_level()
     db.commit()
 
     return {"message": f"Scooter {scooter_id} is now in service"}
@@ -76,6 +82,7 @@ async def free(scooter_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail=str(e))
 
     scooter.status = scooter_logic.status
+    scooter.battery_level = scooter_logic.battery.get_level()
     db.commit()
 
     return {"message": f"Scooter {scooter_id} is available"}
