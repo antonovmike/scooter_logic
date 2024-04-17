@@ -23,6 +23,7 @@ class Scooter(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     model = Column(String, nullable=False)
     status = Column(String, nullable=False)
+    battery_level = Column(Integer, nullable=False, default=100)
     created_at = Column(TIMESTAMP(timezone=True), 
                         server_default=text('now()'), nullable=False)
 
