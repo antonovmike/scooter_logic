@@ -27,14 +27,14 @@ class UserOut(UserBase):
     created_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class VehicleBase(BaseModel):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ScooterModel(VehicleBase):
@@ -50,4 +50,4 @@ class ScooterLogModel(BaseModel):
     scooter_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
