@@ -32,3 +32,6 @@ class ScooterOut(ScooterBase):
 
     class Config:
         from_attributes = True
+
+class ScooterUpdate(BaseModel):
+    status: str
