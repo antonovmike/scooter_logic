@@ -1,5 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel
+# from typing import Optional
 
 
 """
@@ -14,9 +15,11 @@ For example, an employee may have a position and a qualification level
 """
 
 class UserBase(BaseModel):
+    # id: Optional[int] = None
     id: int
     is_user_employee: bool = True
-    user_id: int
+    name: str
+    phone: str
 
 class UserCreate(UserBase):
     pass
@@ -26,20 +29,6 @@ class UserOut(UserBase):
 
     class Config:
         orm_mode = True
-
-
-class EmployeeModel(UserBase):
-    id: int
-    name: str
-    phone: str
-    date: datetime
-
-
-class CustomerModel(UserBase):
-    id: int
-    name: str
-    phone: str
-    date: datetime
 
 
 class VehicleBase(BaseModel):
