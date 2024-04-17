@@ -15,11 +15,10 @@ For example, an employee may have a position and a qualification level
 """
 
 class UserBase(BaseModel):
-    # id: Optional[int] = None
-    id: int
-    is_user_employee: bool = True
     name: str
     phone: str
+    # password: str
+    is_user_employee: bool = True
 
 class UserCreate(UserBase):
     pass

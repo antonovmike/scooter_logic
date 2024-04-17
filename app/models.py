@@ -19,9 +19,10 @@ For example, an employee may have a position and a qualification level
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String, nullable=False)
     phone = Column(String, nullable=False)
+    # password = Column(String, nullable=False)
     is_user_employee = Column(Boolean, nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), 
                         server_default=text('now()'), nullable=False)
