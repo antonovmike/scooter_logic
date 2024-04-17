@@ -4,17 +4,6 @@ from sqlalchemy.sql.sqltypes import TIMESTAMP
 
 from .database import Base
 
-"""
-Approximate database schema:
-users (ID, is_user_employee, user_id)
-employee (ID, name, phone)
-customer (ID, name, phone)
-scooter (ID, status)
-logs (ID, action_date, action_type, user_id, scooter_id)
-Customer and employee should be in different tables, as their data may differ. 
-For example, an employee may have a position and a qualification level
-"""
-
 
 class User(Base):
     __tablename__ = "users"

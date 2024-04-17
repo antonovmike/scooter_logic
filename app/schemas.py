@@ -1,18 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel
-# from typing import Optional
 
-
-"""
-Approximate database schema:
-users (ID, is_user_employee, user_id)
-employee (ID, name, phone)
-customer (ID, name, phone)
-scooter (ID, status)
-logs (ID, action_date, action_type, user_id, scooter_id)
-Customer and employee should be in different tables, as their data may differ. 
-For example, an employee may have a position and a qualification level
-"""
 
 class UserBase(BaseModel):
     name: str
@@ -24,6 +12,7 @@ class UserCreate(UserBase):
     pass
 
 class UserOut(UserBase):
+    id: int
     created_at: datetime
 
     class Config:
@@ -38,6 +27,7 @@ class ScooterCreate(ScooterBase):
     pass
 
 class ScooterOut(ScooterBase):
+    id: int
     created_at: datetime
 
     class Config:
