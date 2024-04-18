@@ -4,15 +4,13 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from .database import Base
+from .database import Base, SQLALCHEMY_DATABASE_URL
 from app.main import app
 from app.models import Scooter
 from scooter.scooter import ScooterStatus
 
 client = TestClient(app)
 
-
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:123@localhost/scooters"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
