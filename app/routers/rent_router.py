@@ -1,16 +1,13 @@
-from fastapi import APIRouter
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models import Scooter
 from scooter.scooter import Battery, ScooterStatus, Scooter as ScooterLogic, battery_crytical
+from scooter.utils import ScooterStatus
+
 
 router = APIRouter()
-
-# from app import models
-# from app.database import get_db
-from scooter.utils import ScooterStatus, scooter, client, employee
 
 
 router = APIRouter(
