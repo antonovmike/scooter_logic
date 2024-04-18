@@ -74,12 +74,8 @@ class Scooter:
     def charge_battery(self):
         self.battery.charge()
 
-        return self.battery.get_level()
-
     def decrease_battery(self, percentage):
         self.battery.decrease(percentage)
-
-        return self.battery.get_level()
 
 
 # Dependency Inversion Principle

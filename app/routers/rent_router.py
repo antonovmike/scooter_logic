@@ -42,7 +42,8 @@ async def rent(scooter_id: int, db: Session = Depends(get_db)):
 
     scooter.status = scooter_logic.status
 
-    scooter.battery_level = scooter_logic.decrease_battery(11)
+    scooter_logic.decrease_battery(11)
+    scooter.battery_level = scooter_logic.battery.get_level()
 
     db.commit()
 
@@ -65,7 +66,8 @@ async def service(scooter_id: int, db: Session = Depends(get_db)):
 
     scooter.status = scooter_logic.status
 
-    scooter.battery_level = scooter_logic.charge_battery()
+    scooter_logic.charge_battery()
+    scooter.battery_level = scooter_logic.battery.get_level()
 
     db.commit()
 
