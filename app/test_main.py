@@ -1,6 +1,8 @@
+import pytest
+
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import sessionmaker
 
 from .database import Base
 from app.main import app
@@ -18,16 +20,20 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base.metadata.create_all(bind=engine)
 
 
-def create_scooter(model: str, status: str, db: Session):
-    scooter = Scooter(model=model, status=status)
+@pytest.fixture(scope="function")
+def test_scooter():
+    db = SessionLocal()
+
+    scooter = Scooter(model="TEST", status=ScooterStatus.AVAILABLE)
     db.add(scooter)
     db.commit()
     db.refresh(scooter)
-    return scooter
 
-db = SessionLocal()
+    yield scooter
 
-scooter = create_scooter("TEST", ScooterStatus.AVAILABLE, db)
+    db.delete(scooter)
+    db.commit()
+    db.close()
 
 
 def test_root():
@@ -36,22 +42,19 @@ def test_root():
     assert response.json() == {"message": "Rent a scooter!"}
 
 
-def test_rent():
-    response = client.get(f"/rent/rent/{scooter.id}")
+def test_rent(test_scooter):
+    response = client.get(f"/rent/rent/{test_scooter.id}")
     assert response.status_code == 200
-    # assert response.json() == {"message": ScooterStatus.RENTED}
-    assert response.json() == {"message": f"Scooter {scooter.id} is now rented"}
+    assert response.json() == {"message": f"Scooter {test_scooter.id} is now rented"}
 
 
-def test_free():
-    response = client.get(f"/rent/free/{scooter.id}")
+def test_free(test_scooter):
+    response = client.get(f"/rent/free/{test_scooter.id}")
     assert response.status_code == 200
-    # assert response.json() == {"message": ScooterStatus.AVAILABLE}
-    assert response.json() == {"message": f"Scooter {scooter.id} is available"}
+    assert response.json() == {"message": f"Scooter {test_scooter.id} is available"}
 
 
-def test_service():
-    response = client.get(f"/rent/service/{scooter.id}")
+def test_service(test_scooter):
+    response = client.get(f"/rent/service/{test_scooter.id}")
     assert response.status_code == 200
-    # assert response.json() == {"message": ScooterStatus.SERVICE}
-    assert response.json() == {"message": f"Scooter {scooter.id} is now in service"}
+    assert response.json() == {"message": f"Scooter {test_scooter.id} is now in service"}
