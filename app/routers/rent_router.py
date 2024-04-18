@@ -41,7 +41,9 @@ async def rent(scooter_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail=str(e))
 
     scooter.status = scooter_logic.status
-    scooter.battery_level = scooter_logic.battery.get_level()
+
+    scooter.battery_level = scooter_logic.battery.get_level() - battery_crytical
+
     db.commit()
 
     return {"message": f"Scooter {scooter_id} is now rented"}
@@ -62,7 +64,9 @@ async def service(scooter_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail=str(e))
 
     scooter.status = scooter_logic.status
-    scooter.battery_level = scooter_logic.battery.get_level()
+
+    scooter.battery_level = 100
+
     db.commit()
 
     return {"message": f"Scooter {scooter_id} is now in service"}
