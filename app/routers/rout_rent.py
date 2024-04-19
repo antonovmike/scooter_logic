@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from app import oauth2
 from app.database import get_db
 from app.models import Scooter
 from scooter.scooter import Battery, ScooterStatus, Scooter as ScooterLogic, battery_crytical
@@ -21,7 +22,9 @@ class InvalidScooterStatusError(Exception):
 
 
 @router.get("/rent/{scooter_id}")
-async def rent(scooter_id: int, db: Session = Depends(get_db)):
+async def rent(scooter_id: int, db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
+    print(user_id)
+
     scooter = db.query(Scooter).filter(Scooter.id == scooter_id).first()
     if not scooter:
         raise HTTPException(status_code=404, detail="Scooter not found")
@@ -48,7 +51,9 @@ async def rent(scooter_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/service/{scooter_id}")
-async def service(scooter_id: int, db: Session = Depends(get_db)):
+async def service(scooter_id: int, db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
+    print(user_id)
+
     scooter = db.query(Scooter).filter(Scooter.id == scooter_id).first()
     if not scooter:
         raise HTTPException(status_code=404, detail="Scooter not found")
@@ -71,7 +76,9 @@ async def service(scooter_id: int, db: Session = Depends(get_db)):
     return {"message": f"Scooter {scooter_id} is now in service"}
 
 @router.get("/free/{scooter_id}")
-async def free(scooter_id: int, db: Session = Depends(get_db)):
+async def free(scooter_id: int, db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
+    print(user_id)
+
     scooter = db.query(Scooter).filter(Scooter.id == scooter_id).first()
     if not scooter:
         raise HTTPException(status_code=404, detail="Scooter not found")
