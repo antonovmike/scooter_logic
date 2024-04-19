@@ -10,9 +10,10 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String, nullable=False)
-    phone = Column(String, nullable=False)
+    email = Column(String, nullable=False)
     password = Column(String, nullable=False)
-    is_user_employee = Column(Boolean, nullable=False)
+    # default= and server_default= do not work
+    is_user_employee = Column(Boolean, server_default=text('False'), nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), 
                         server_default=text('now()'), nullable=False)
 

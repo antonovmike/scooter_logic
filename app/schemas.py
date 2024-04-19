@@ -1,10 +1,10 @@
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 
 class UserBase(BaseModel):
     name: str
-    phone: str
+    email: EmailStr
     password: str
     is_user_employee: bool = True
 

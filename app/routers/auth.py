@@ -10,12 +10,11 @@ router = APIRouter(tags=['Authentification'])
 @router.post('/login')
 def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(database.get_db)):
     # {
-    #     "username": "...", I should fix if because now "username" is "phone"
-    #     "password": "..."
+    #     "username": "email@email.com",
+    #     "password": "1"
     # }
     # Send Form Data instead of Json
-    user = db.query(models.User).filter(models.User.phone == user_credentials.username).first()
-    print(user)
+    user = db.query(models.User).filter(models.User.email == user_credentials.username).first()
 
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Invalid credentials")
