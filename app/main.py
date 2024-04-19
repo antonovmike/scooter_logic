@@ -6,7 +6,7 @@ from psycopg2.extras import RealDictCursor
 
 from . import models
 from .database import engine
-from .routers import rout_rent, rout_scooters, rout_user
+from .routers import rout_rent, rout_scooters, rout_user, auth
 
 
 models.Base.metadata.create_all(bind=engine)
@@ -34,6 +34,7 @@ while True:
 app.include_router(rout_rent.router)
 app.include_router(rout_user.router)
 app.include_router(rout_scooters.router)
+app.include_router(auth.router)
 
 
 @app.get("/")
