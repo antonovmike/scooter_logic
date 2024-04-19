@@ -12,8 +12,7 @@ class User(Base):
     name = Column(String, nullable=False)
     email = Column(String, nullable=False)
     password = Column(String, nullable=False)
-    # default= and server_default= do not work
-    is_user_employee = Column(Boolean, server_default=text('False'), nullable=False)
+    is_user_employee = Column(Boolean, nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), 
                         server_default=text('now()'), nullable=False)
 

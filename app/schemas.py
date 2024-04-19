@@ -6,7 +6,7 @@ class UserBase(BaseModel):
     name: str
     email: EmailStr
     password: str
-    is_user_employee: bool = True
+    is_user_employee: bool = False
 
 class UserCreate(UserBase):
     pass
