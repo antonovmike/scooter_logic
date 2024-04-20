@@ -32,7 +32,7 @@ async def rent(scooter_id: int, db: Session = Depends(get_db), user_id: int = De
     battery = Battery(level=scooter.battery_level)
 
     employee = db.query(User).filter(User.id == user_id.id).first()
-    print(employee.is_user_employee)
+
     if employee.is_user_employee:
         print("User is employee")
     else:
@@ -40,8 +40,11 @@ async def rent(scooter_id: int, db: Session = Depends(get_db), user_id: int = De
 
     scooter_logic = ScooterLogic(scooter.status, battery)
     print("rent~~~~~~~>", scooter.status)
-    print("rent~~~~~~~>", scooter_logic.is_available(False))
+    print("rent~e~~~~~>", scooter_logic.is_available(employee.is_user_employee))
     print("rent~~~~~~~>", scooter_logic.battery.get_level())
+
+    if scooter.status != ScooterStatus.AVAILABLE:
+        raise HTTPException(status_code=400, detail=f"Scooter is not available: {scooter.status}")
 
     if scooter_logic.battery.get_level() <= battery_crytical:
         raise HTTPException(status_code=400, detail="Scooter battery level is too low to rent")

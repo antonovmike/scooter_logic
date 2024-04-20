@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from logging_setup import log
 
 
-battery_crytical = 80
+battery_crytical = 20
 
 
 class InvalidScooterStatusError(Exception):
