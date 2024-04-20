@@ -39,9 +39,6 @@ async def rent(scooter_id: int, db: Session = Depends(get_db), user_id: int = De
         print("User is customer")
 
     scooter_logic = ScooterLogic(scooter.status, battery)
-    print("rent~~~~~~~>", scooter.status)
-    print("rent~e~~~~~>", scooter_logic.is_available(employee.is_user_employee))
-    print("rent~~~~~~~>", scooter_logic.battery.get_level())
 
     if scooter.status != ScooterStatus.AVAILABLE:
         raise HTTPException(status_code=400, detail=f"Scooter is not available: {scooter.status}")
@@ -58,8 +55,6 @@ async def rent(scooter_id: int, db: Session = Depends(get_db), user_id: int = De
 
     scooter_logic.decrease_battery(17)
     scooter.battery_level = scooter_logic.battery.get_level()
-    print("rent~~~~~~~>", scooter.status)
-    print("rent~~~~~~~>", scooter.battery_level)
 
     db.commit()
 
@@ -71,6 +66,9 @@ async def service(scooter_id: int, db: Session = Depends(get_db), user_id: int =
     print(user_id)
     employee = db.query(User).filter(User.id == user_id.id).first()
 
+    if scooter.status != ScooterStatus.AVAILABLE:
+        raise HTTPException(status_code=400, detail=f"Scooter is not available: {scooter.status}")
+
     if employee.is_user_employee:
         scooter = db.query(Scooter).filter(Scooter.id == scooter_id).first()
         if not scooter:
@@ -78,9 +76,6 @@ async def service(scooter_id: int, db: Session = Depends(get_db), user_id: int =
 
         battery = Battery(level=scooter.battery_level)
         scooter_logic = ScooterLogic(scooter.status, battery)
-        print("service~~~~~~~>", scooter.status)
-        print("service~~~~~~~>", scooter_logic.is_available(False))
-        print("service~~~~~~~>", scooter_logic.battery.get_level())
 
         try:
             scooter_logic.change_status(ScooterStatus.SERVICE)
@@ -91,8 +86,6 @@ async def service(scooter_id: int, db: Session = Depends(get_db), user_id: int =
 
         scooter_logic.charge_battery()
         scooter.battery_level = scooter_logic.battery.get_level()
-        print("service~~~~~~~>", scooter.status)
-        print("service~~~~~~~>", scooter.battery_level)
 
         db.commit()
 
@@ -105,14 +98,15 @@ async def service(scooter_id: int, db: Session = Depends(get_db), user_id: int =
 async def free(scooter_id: int, db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
     print(user_id)
 
+    if scooter.status == ScooterStatus.LOST:
+        raise HTTPException(status_code=400, detail=f"Impossible to change scooter's status: {scooter.status}")
+
     scooter = db.query(Scooter).filter(Scooter.id == scooter_id).first()
     if not scooter:
         raise HTTPException(status_code=404, detail="Scooter not found")
 
     battery = Battery(level=scooter.battery_level)
     scooter_logic = ScooterLogic(scooter.status, battery)
-    print("free~~~~~~~>", scooter.status)
-    print("free~~~~~~~>", scooter_logic.is_available(False))
 
     try:
         scooter_logic.change_status(ScooterStatus.AVAILABLE)
@@ -120,7 +114,6 @@ async def free(scooter_id: int, db: Session = Depends(get_db), user_id: int = De
         raise HTTPException(status_code=400, detail=str(e))
 
     scooter.status = scooter_logic.status
-    print("free~~~~~~~>", scooter.status)
 
     scooter.battery_level = scooter_logic.battery.get_level()
     db.commit()
