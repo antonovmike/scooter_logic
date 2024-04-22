@@ -22,8 +22,8 @@ class InvalidScooterStatusError(Exception):
 
 
 @router.get("/rent/{scooter_id}")
-async def rent(scooter_id: int, db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
-    print(user_id)
+async def rent(scooter_id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+    print(current_user.email)
 
     scooter = db.query(Scooter).filter(Scooter.id == scooter_id).first()
     if not scooter:
@@ -31,7 +31,7 @@ async def rent(scooter_id: int, db: Session = Depends(get_db), user_id: int = De
 
     battery = Battery(level=scooter.battery_level)
 
-    employee = db.query(User).filter(User.id == user_id.id).first()
+    employee = db.query(User).filter(User.id == current_user.id).first()
 
     if employee.is_user_employee:
         print("User is employee")
@@ -62,9 +62,9 @@ async def rent(scooter_id: int, db: Session = Depends(get_db), user_id: int = De
 
 
 @router.get("/service/{scooter_id}")
-async def service(scooter_id: int, db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
-    print(user_id)
-    employee = db.query(User).filter(User.id == user_id.id).first()
+async def service(scooter_id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+    print(current_user.email)
+    employee = db.query(User).filter(User.id == current_user.id).first()
 
     if scooter.status != ScooterStatus.AVAILABLE:
         raise HTTPException(status_code=400, detail=f"Scooter is not available: {scooter.status}")
@@ -95,8 +95,8 @@ async def service(scooter_id: int, db: Session = Depends(get_db), user_id: int =
     
 
 @router.get("/free/{scooter_id}")
-async def free(scooter_id: int, db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
-    print(user_id)
+async def free(scooter_id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+    print(current_user.name)
 
     if scooter.status == ScooterStatus.LOST:
         raise HTTPException(status_code=400, detail=f"Impossible to change scooter's status: {scooter.status}")
