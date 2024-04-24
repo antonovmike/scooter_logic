@@ -49,25 +49,16 @@ async def service(
 async def free(scooter_id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
     scooter = db.query(Scooter).filter(Scooter.id == scooter_id).first()
 
-    if scooter.status == ScooterStatus.LOST:
-        raise HTTPException(status_code=400, detail=f"Impossible to change scooter's status: {scooter.status}")
-
     if not scooter:
         raise HTTPException(status_code=404, detail="Scooter not found")
 
-    scooter_logic = ScooterLogic(scooter.status, Battery(scooter.battery_level))
+    if scooter.status == ScooterStatus.LOST:
+        raise HTTPException(status_code=400, detail=f"Impossible to change scooter's status: {scooter.status}")
 
-    try:
-        scooter_logic.change_status(ScooterStatus.AVAILABLE)
-    except InvalidScooterStatusError as e:
-        raise HTTPException(status_code=400, detail=str(e.error))
-
-    scooter.status = scooter_logic.status
-    scooter.battery_level = scooter_logic.battery.get_level()
+    scooter.status = ScooterStatus.AVAILABLE
+    db.commit()
 
     add_to_scooter_log(db, scooter_id, scooter.status, current_user.id)
-
-    db.commit()
 
     return {"message": f"Scooter {scooter_id} is available"}
 
