@@ -8,9 +8,6 @@ from scooter.scooter import Battery, ScooterStatus, Scooter as ScooterLogic, bat
 from scooter.utils import ScooterStatus
 
 
-router = APIRouter()
-
-
 router = APIRouter(
     prefix="/rent",
     tags=['Rent'] # Adds headers to documentation http://127.0.0.1:8000/docs
