@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app import oauth2
 from app.database import get_db
-from app.models import Scooter, User
+from app.models import Scooter, ScooterLog, User
 from scooter.scooter import Battery, ScooterStatus, Scooter as ScooterLogic, battery_crytical
 from scooter.utils import ScooterStatus
 
@@ -46,6 +46,8 @@ async def rent(scooter_id: int, db: Session = Depends(get_db), current_user: int
     scooter_logic.decrease_battery(17)
     scooter.battery_level = scooter_logic.battery.get_level()
 
+    add_to_scooter_log(db, scooter_id, scooter.status, current_user.id)
+
     db.commit()
 
     return {"message": f"Scooter {scooter_id} is now rented"}
@@ -56,11 +58,12 @@ async def service(scooter_id: int, db: Session = Depends(get_db), current_user: 
     print(current_user.email)
     employee = db.query(User).filter(User.id == current_user.id).first()
 
-    if scooter.status != ScooterStatus.AVAILABLE:
-        raise HTTPException(status_code=400, detail=f"Scooter is not available: {scooter.status}")
-
     if employee.is_user_employee:
         scooter = db.query(Scooter).filter(Scooter.id == scooter_id).first()
+
+        if scooter.status != ScooterStatus.AVAILABLE:
+            raise HTTPException(status_code=400, detail=f"Scooter is not available: {scooter.status}")
+
         if not scooter:
             raise HTTPException(status_code=404, detail="Scooter not found")
 
@@ -77,6 +80,8 @@ async def service(scooter_id: int, db: Session = Depends(get_db), current_user: 
         scooter_logic.charge_battery()
         scooter.battery_level = scooter_logic.battery.get_level()
 
+        add_to_scooter_log(db, scooter_id, scooter.status, current_user.id)
+
         db.commit()
 
         return {"message": f"Scooter {scooter_id} is now in service"}
@@ -88,10 +93,11 @@ async def service(scooter_id: int, db: Session = Depends(get_db), current_user: 
 async def free(scooter_id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
     print(current_user.name)
 
+    scooter = db.query(Scooter).filter(Scooter.id == scooter_id).first()
+
     if scooter.status == ScooterStatus.LOST:
         raise HTTPException(status_code=400, detail=f"Impossible to change scooter's status: {scooter.status}")
 
-    scooter = db.query(Scooter).filter(Scooter.id == scooter_id).first()
     if not scooter:
         raise HTTPException(status_code=404, detail="Scooter not found")
 
@@ -106,6 +112,18 @@ async def free(scooter_id: int, db: Session = Depends(get_db), current_user: int
     scooter.status = scooter_logic.status
 
     scooter.battery_level = scooter_logic.battery.get_level()
+
+    add_to_scooter_log(db, scooter_id, scooter.status, current_user.id)
+
     db.commit()
 
     return {"message": f"Scooter {scooter_id} is available"}
+
+
+def add_to_scooter_log(db: Session, scooter_id: int, action_type: str, user_id: int):
+    scooter_log = ScooterLog(scooter_id=scooter_id, action_type=action_type, user_id=user_id)
+    if not scooter_log:
+        raise HTTPException(status_code=404, detail="Scooter log not found")
+    else:
+        db.add(scooter_log)
+        db.commit()
