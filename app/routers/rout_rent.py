@@ -28,13 +28,6 @@ async def rent(scooter_id: int, db: Session = Depends(get_db), current_user: int
 
     battery = Battery(level=scooter.battery_level)
 
-    employee = db.query(User).filter(User.id == current_user.id).first()
-
-    if employee.is_user_employee:
-        print("User is employee")
-    else:
-        print("User is customer")
-
     scooter_logic = ScooterLogic(scooter.status, battery)
 
     if scooter.status != ScooterStatus.AVAILABLE:
@@ -89,7 +82,7 @@ async def service(scooter_id: int, db: Session = Depends(get_db), current_user: 
         return {"message": f"Scooter {scooter_id} is now in service"}
     else:
         return {"message": f"You are not an employee"}
-    
+
 
 @router.get("/free/{scooter_id}")
 async def free(scooter_id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
