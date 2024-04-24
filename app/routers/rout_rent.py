@@ -15,7 +15,7 @@ router = APIRouter(
 
 
 class InvalidScooterStatusError(Exception):
-    pass
+    error = "Invalid scooter status"
 
 
 @router.get("/rent/{scooter_id}")
@@ -47,8 +47,6 @@ async def service(
 
 @router.get("/free/{scooter_id}")
 async def free(scooter_id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
-    print(current_user.name)
-
     scooter = db.query(Scooter).filter(Scooter.id == scooter_id).first()
 
     if scooter.status == ScooterStatus.LOST:
@@ -57,16 +55,14 @@ async def free(scooter_id: int, db: Session = Depends(get_db), current_user: int
     if not scooter:
         raise HTTPException(status_code=404, detail="Scooter not found")
 
-    battery = Battery(level=scooter.battery_level)
-    scooter_logic = ScooterLogic(scooter.status, battery)
+    scooter_logic = ScooterLogic(scooter.status, Battery(scooter.battery_level))
 
     try:
         scooter_logic.change_status(ScooterStatus.AVAILABLE)
     except InvalidScooterStatusError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e.error))
 
     scooter.status = scooter_logic.status
-
     scooter.battery_level = scooter_logic.battery.get_level()
 
     add_to_scooter_log(db, scooter_id, scooter.status, current_user.id)
