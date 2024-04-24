@@ -47,13 +47,15 @@ def test_rent(test_scooter):
     assert response.json() == {"message": f"Scooter {test_scooter.id} is now rented"}
 
 
-# def test_free(test_scooter):
-#     response = client.get(f"/rent/free/{test_scooter.id}")
-#     assert response.status_code == 200
-#     assert response.json() == {"message": f"Scooter {test_scooter.id} is available"}
+@pytest.fixture(scope="function")
+def test_free(test_scooter):
+    response = client.get(f"/rent/free/{test_scooter.id}")
+    assert response.status_code == 200
+    assert response.json() == {"message": f"Scooter {test_scooter.id} is available"}
 
 
-# def test_service(test_scooter):
-#     response = client.get(f"/rent/service/{test_scooter.id}")
-#     assert response.status_code == 200
-#     assert response.json() == {"message": f"Scooter {test_scooter.id} is now in service"}
+@pytest.fixture(scope="function")
+def test_service(test_scooter):
+    response = client.get(f"/rent/service/{test_scooter.id}")
+    assert response.status_code == 200
+    assert response.json() == {"message": f"Scooter {test_scooter.id} is now in service"}
