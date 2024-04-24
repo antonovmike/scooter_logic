@@ -31,7 +31,11 @@ async def rent(scooter_id: int, db: Session = Depends(get_db), current_user: int
 
 
 @router.get("/service/{scooter_id}")
-async def service(scooter_id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+async def service(
+    scooter_id: int, 
+    db: Session = Depends(get_db), 
+    current_user: int = Depends(oauth2.get_current_user)
+    ):
     scooter, scooter_logic = get_scooter_and_check_availability(db, scooter_id, current_user)
 
     if current_user.is_user_employee:
@@ -81,24 +85,13 @@ def add_to_scooter_log(db: Session, scooter_id: int, action_type: str, user_id: 
         db.commit()
 
 
-def check_scooter_availability(db: Session, scooter_id: int, current_user: int):
-    scooter = db.query(Scooter).filter(Scooter.id == scooter_id).first()
-    if not scooter:
-        raise HTTPException(status_code=404, detail="Scooter not found")
-
-    battery = Battery(level=scooter.battery_level)
-    scooter_logic = ScooterLogic(scooter.status, battery)
-
-    if not scooter_logic.is_available(current_user.is_user_employee):
-        raise HTTPException(status_code=400, detail=f"Scooter is not available: {scooter.status}")
-
-    return scooter_logic
-
-
 def get_scooter_and_check_availability(db: Session, scooter_id: int, current_user: int):
     scooter = db.query(Scooter).filter(Scooter.id == scooter_id).first()
     if not scooter:
         raise HTTPException(status_code=404, detail="Scooter not found")
+
+    if scooter.status == ScooterStatus.LOST:
+        raise HTTPException(status_code=400, detail=f"Impossible to change scooter's status: {scooter.status}")
 
     battery = Battery(level=scooter.battery_level)
     scooter_logic = ScooterLogic(scooter.status, battery)
@@ -109,7 +102,14 @@ def get_scooter_and_check_availability(db: Session, scooter_id: int, current_use
     return scooter, scooter_logic
 
 
-def update_scooter_status_and_battery(db: Session, scooter: Scooter, scooter_logic: ScooterLogic, new_status: ScooterStatus, current_user, battery_change: int = 0):
+def update_scooter_status_and_battery(
+        db: Session, 
+        scooter: Scooter, 
+        scooter_logic: ScooterLogic, 
+        new_status: ScooterStatus, 
+        current_user, 
+        battery_change: int = 0
+        ):
     try:
         scooter_logic.change_status(new_status)
     except InvalidScooterStatusError as e:
