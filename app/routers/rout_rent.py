@@ -22,16 +22,9 @@ class InvalidScooterStatusError(Exception):
 async def rent(scooter_id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
     print(current_user.email)
 
+    scooter_logic = check_scooter_availability(db, scooter_id, current_user)
+
     scooter = db.query(Scooter).filter(Scooter.id == scooter_id).first()
-    if not scooter:
-        raise HTTPException(status_code=404, detail="Scooter not found")
-
-    battery = Battery(level=scooter.battery_level)
-
-    scooter_logic = ScooterLogic(scooter.status, battery)
-
-    if scooter.status != ScooterStatus.AVAILABLE:
-        raise HTTPException(status_code=400, detail=f"Scooter is not available: {scooter.status}")
 
     if scooter_logic.battery.get_level() <= battery_crytical:
         raise HTTPException(status_code=400, detail="Scooter battery level is too low to rent")
@@ -55,14 +48,13 @@ async def rent(scooter_id: int, db: Session = Depends(get_db), current_user: int
 
 @router.get("/service/{scooter_id}")
 async def service(scooter_id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+    scooter_logic = check_scooter_availability(db, scooter_id, current_user)
+
     print(current_user.email)
     employee = db.query(User).filter(User.id == current_user.id).first()
 
     if employee.is_user_employee:
         scooter = db.query(Scooter).filter(Scooter.id == scooter_id).first()
-
-        if scooter.status != ScooterStatus.AVAILABLE:
-            raise HTTPException(status_code=400, detail=f"Scooter is not available: {scooter.status}")
 
         if not scooter:
             raise HTTPException(status_code=404, detail="Scooter not found")
@@ -127,3 +119,17 @@ def add_to_scooter_log(db: Session, scooter_id: int, action_type: str, user_id: 
     else:
         db.add(scooter_log)
         db.commit()
+
+
+def check_scooter_availability(db: Session, scooter_id: int, current_user: int):
+    scooter = db.query(Scooter).filter(Scooter.id == scooter_id).first()
+    if not scooter:
+        raise HTTPException(status_code=404, detail="Scooter not found")
+
+    battery = Battery(level=scooter.battery_level)
+    scooter_logic = ScooterLogic(scooter.status, battery)
+
+    if not scooter_logic.is_available(current_user.is_user_employee):
+        raise HTTPException(status_code=400, detail=f"Scooter is not available: {scooter.status}")
+
+    return scooter_logic
