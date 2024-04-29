@@ -82,6 +82,7 @@ async def service(
             # Updates Scooter log only
             update_scooter_status_and_battery(db, scooter, scooter_logic, ScooterStatus.SERVICE, current_user)
             scooter.status = ScooterStatus.SERVICE
+            scooter.battery_level = 100
             db.commit()
             return {"message": f"Scooter {scooter_id} is now in service"}
     else:
