@@ -36,11 +36,7 @@ async def rent(scooter_id: int, db: Session = Depends(get_db), current_user: int
     Raises:
     - HTTPException: If the scooter battery level is too low or if the scooter is not available.
     """
-    # print("RENT")
     scooter, scooter_logic = get_scooter_and_check_availability(db, scooter_id, current_user)
-    print("RENT")
-    print("scooter", scooter)
-    print("scooter_logic", scooter_logic)
 
     if scooter_logic.battery.get_level() <= scooter_logic.battery.battery_low(scooter_logic.battery.get_level()):
         raise HTTPException(status_code=400, detail="Scooter battery level is too low to rent")
@@ -75,7 +71,6 @@ async def service(
     user_status = db.query(User).filter(User.id == current_user.id).first().is_user_employee
 
     if user_status:
-        print("scooter.status", scooter.status)
         if scooter.status == ScooterStatus.SERVICE:
             return {"message": f"Scooter {scooter_id} is already in service"}
         else:
@@ -163,22 +158,12 @@ def get_scooter_and_check_availability(db: Session, scooter_id: int, current_use
     - HTTPException: If the scooter is not found, if its status is lost, or if it is not available.
     """
     scooter: Scooter = db.query(Scooter).filter(Scooter.id == scooter_id).first()
-    print("scooter", scooter.status)
+
     if not scooter:
         raise HTTPException(status_code=404, detail="Scooter not found")
 
-    # if scooter.status == ScooterStatus.LOST or scooter.status == ScooterStatus.RENTED:
-    #     raise HTTPException(status_code=400, detail=f"Scooter is not available: {scooter.status}")
-
     battery = Battery(level=scooter.battery_level)
     scooter_logic: ScooterLogic = ScooterLogic(scooter.status, battery)
-
-    # user_status = db.query(User).filter(User.id == current_user.id).first().is_user_employee
-
-    # print("scooter_logic.is_available(user_status)", scooter_logic.is_available(user_status))
-
-    # if not scooter_logic.is_available(user_status):
-    #     raise HTTPException(status_code=400, detail=f"Scooter is not available: {scooter.status}")
 
     return scooter, scooter_logic
 
