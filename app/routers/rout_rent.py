@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app import oauth2
 from app.database import get_db
 from app.models import Scooter, ScooterLog, User
-from scooter.scooter import Battery, ScooterStatus, Scooter as ScooterLogic, battery_crytical
+from scooter.scooter import Battery, ScooterStatus, Scooter as ScooterLogic
 from scooter.utils import ScooterStatus
 
 
@@ -37,7 +37,7 @@ async def rent(scooter_id: int, db: Session = Depends(get_db), current_user: int
     """
     scooter, scooter_logic = get_scooter_and_check_availability(db, scooter_id, current_user)
 
-    if scooter_logic.battery.get_level() <= battery_crytical:
+    if scooter_logic.battery.get_level() <= scooter_logic.battery.battery_crytical:
         raise HTTPException(status_code=400, detail="Scooter battery level is too low to rent")
 
     update_scooter_status_and_battery(db, scooter, scooter_logic, ScooterStatus.RENTED, current_user)

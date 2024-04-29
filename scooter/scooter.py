@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from logging_setup import log
 
 
-battery_crytical = 20
+# battery_crytical = 20
 
 
 class InvalidScooterStatusError(Exception):
@@ -24,8 +24,9 @@ class ScooterStatus:
 
 class Battery:
     """Represents a scooter battery."""
-    def __init__(self, level=100):
+    def __init__(self, level=100, battery_crytical=20):
         self.level = level
+        self.battery_crytical = battery_crytical
 
     def charge(self):
         """Charges the battery to 100%."""
@@ -42,7 +43,7 @@ class Battery:
         self.level -= percentage
         if self.level < 0:
             self.level = 0
-        if self.level <= battery_crytical:
+        if self.level <= self.battery_crytical:
             print(f"! Battery level = {self.level}%")
 
     def get_level(self):
@@ -76,7 +77,7 @@ class Scooter:
             raise InvalidScooterStatusError(f"Invalid status: {new_status}")
         self.status = new_status
         self.logger.info(f"Scooter status changed to {new_status}")
-        if self.battery.get_level() <= battery_crytical:
+        if self.battery.get_level() <= self.battery.battery_crytical:
             self.status = ScooterStatus.LOW_BATTERY
             return self.status
         if new_status == ScooterStatus.AVAILABLE:
@@ -94,12 +95,12 @@ class Scooter:
         Returns:
         - bool: True if the scooter is available, False otherwise.
         """
-        if self.get_battery_level() <= battery_crytical:
+        if self.get_battery_level() <= self.battery.battery_crytical:
             return self.status == ScooterStatus.LOW_BATTERY
         elif user_is_employee and self.status != ScooterStatus.RENTED:
             return self.status == ScooterStatus.AVAILABLE
         elif not user_is_employee:
-            return self.status == ScooterStatus.AVAILABLE and self.get_battery_level() >= battery_crytical
+            return self.status == ScooterStatus.AVAILABLE and self.get_battery_level() >= self.battery.battery_crytical
 
     def get_battery_level(self):
         """Returns the current battery level."""
