@@ -9,11 +9,17 @@ router = APIRouter(tags=['Authentification'])
 
 @router.post('/login')
 def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(database.get_db)):
-    # {
-    #     "username": "email@email.com",
-    #     "password": "1"
-    # }
-    # Send Form Data instead of Json
+    """
+    Authenticate a user and generate an access token.
+
+    Parameters:
+    - user_credentials (OAuth2PasswordRequestForm): User credentials (username and password).
+    - db (Session): SQLAlchemy database session.
+
+    Returns:
+    - dict: A dictionary containing the access token and token type.
+    """
+
     user = db.query(models.User).filter(models.User.email == user_credentials.username).first()
 
     if not user:

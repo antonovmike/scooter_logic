@@ -17,6 +17,18 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
 def create_access_token(data: dict):
+    """
+    Creates a new access token with an expiration time.
+
+    Parameters:
+    - data (dict): The data to be encoded into the token.
+
+    Returns:
+    - str: The encoded JWT access token.
+
+    Raises:
+    - None
+    """
     to_encode = data.copy()
 
     expire = datetime.now(UTC) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -28,6 +40,19 @@ def create_access_token(data: dict):
 
 
 def verify_access_token(token: str, credentials_exception: HTTPException):
+    """
+    Verifies the access token and extracts the user ID from it.
+
+    Parameters:
+    - token (str): The JWT token to verify.
+    - credentials_exception (HTTPException): The exception to raise if verification fails.
+
+    Returns:
+    - schemas.TokenData: The token data containing the user ID.
+
+    Raises:
+    - HTTPException: If the token is invalid or the user ID is missing.
+    """
     try:
         payload: dict = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         id: str = payload.get("user_id") # Depends on app/routers/auth.py access_token = oauth2.create_access_token(data= {"user_id": user.id})
@@ -42,6 +67,19 @@ def verify_access_token(token: str, credentials_exception: HTTPException):
 
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(database.get_db)):
+    """
+    Retrieves the current user based on the provided token.
+
+    Parameters:
+    - token (str): The JWT token to verify and extract the user ID.
+    - db (Session): The database session.
+
+    Returns:
+    - models.User: The user object corresponding to the provided token.
+
+    Raises:
+    - HTTPException: If the token is invalid or the user ID is missing.
+    """
     credentials_exception: HTTPException = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, 
             detail=f"Could not validate credentians", 

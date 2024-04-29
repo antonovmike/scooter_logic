@@ -16,6 +16,16 @@ router = APIRouter(
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=ScooterOut)
 def create_scooter(scooter: ScooterCreate, db: Session = Depends(get_db)):
+    """
+    Creates a new scooter in the database.
+
+    Parameters:
+    - scooter (ScooterCreate): The scooter data to create.
+    - db (Session): The database session.
+
+    Returns:
+    - ScooterOut: The created scooter object.
+    """
     new_scooter: models.Scooter = models.Scooter(**scooter.model_dump())
     db.add(new_scooter)
     db.commit()
@@ -26,6 +36,19 @@ def create_scooter(scooter: ScooterCreate, db: Session = Depends(get_db)):
 
 @router.get("/{id}", response_model=ScooterOut)
 def get_scooter(id: int, db: Session = Depends(get_db)):
+    """
+    Retrieves a scooter by its ID.
+
+    Parameters:
+    - id (int): The ID of the scooter to retrieve.
+    - db (Session): The database session.
+
+    Returns:
+    - ScooterOut: The scooter object.
+
+    Raises:
+    - HTTPException: If the scooter with the given ID does not exist.
+    """
     scooter: models.Scooter = db.query(models.Scooter).filter(models.Scooter.id == id).first()
 
     if not scooter:
@@ -39,6 +62,20 @@ def get_scooter(id: int, db: Session = Depends(get_db)):
 
 @router.put("/{id}", response_model=ScooterOut)
 def update_scooter_status(id: int, scooter_update: ScooterUpdate, db: Session = Depends(get_db)):
+    """
+    Updates the status of a scooter.
+
+    Parameters:
+    - id (int): The ID of the scooter to update.
+    - scooter_update (ScooterUpdate): The new status for the scooter.
+    - db (Session): The database session.
+
+    Returns:
+    - ScooterOut: The updated scooter object.
+
+    Raises:
+    - HTTPException: If the scooter with the given ID does not exist.
+    """
     scooter: models.Scooter = db.query(models.Scooter).filter(models.Scooter.id == id).first()
     if not scooter:
         raise HTTPException(

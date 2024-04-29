@@ -15,6 +15,20 @@ Base = sqlalchemy.orm.declarative_base()
 
 
 def get_db():
+    """
+    Provides a database session for each request.
+
+    This function is a dependency that yields a database session. 
+    It is designed to be used with FastAPI's dependency injection system, 
+    allowing each request to have its own database session. 
+    The session is automatically closed after the request is processed.
+
+    Returns:
+    - Session: A SQLAlchemy session object.
+
+    Yields:
+    - Session: The database session for the current request.
+    """
     db = SessionLocal()
     try:
         yield db

@@ -15,6 +15,15 @@ class UserInterface(ABC):
             self, scooter: Scooter, status_checker: ScooterStatusChecker, rental_type: RentType, 
             action_description: str, user_is_employee: bool
             ):
+        """
+        Takes the scooter based on the provided status checker and rental type.
+
+        Parameters:
+        - scooter (Scooter): The scooter to take.
+        - status_checker (ScooterStatusChecker): The status checker to use.
+        - rental_type (RentType): The type of rental to use.
+        - action_description (str): The description of the action being taken.
+        """
         try:
             if status_checker:
                 rental = self.rental_system.create_rental_instance(rental_type, scooter)
@@ -30,12 +39,23 @@ class UserInterface(ABC):
 
 
 class Client(UserInterface):
+    """Represents a client in the system."""
     def __init__(self):
         self.rental_system = RentalSystem(scooter=None)
         self.logger = log
         self.user_is_employee = False
 
     def take_scooter(self, scooter: Scooter, status_checker: ScooterStatusChecker) -> bool:
+        """
+        Takes the scooter based on the provided status checker.
+
+        Parameters:
+        - scooter (Scooter): The scooter to take.
+        - status_checker (ScooterStatusChecker): The status checker to use.
+
+        Returns:
+        - bool: True if the scooter was taken successfully, False otherwise.
+        """
         if scooter.get_battery_level() >= battery_crytical:
             rental_type = self.rental_system.determine_rental_type(self.user_is_employee)
             if self._take_scooter(
@@ -51,12 +71,23 @@ class Client(UserInterface):
 
 
 class Employee(UserInterface):
+    """Represents an employee in the system."""
     def __init__(self):
         self.rental_system = RentalSystem(scooter=None)
         self.logger = log
         self.user_is_employee = True
 
     def take_scooter(self, scooter: Scooter, status_checker: ScooterStatusChecker) -> bool:
+        """
+        Takes the scooter based on the provided status checker.
+        
+        Parameters:
+        - scooter (Scooter): The scooter to take.
+        - status_checker (ScooterStatusChecker): The status checker to use.
+
+        Returns:
+        - bool: True if the scooter was taken successfully, False otherwise.
+        """
         rental_type = self.rental_system.determine_rental_type(self.user_is_employee)
         if self._take_scooter(
                 scooter, status_checker, rental_type, 

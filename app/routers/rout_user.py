@@ -16,6 +16,16 @@ router = APIRouter(
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=UserOut)
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
+    """
+    Creates a new user in the database with a hashed password.
+
+    Parameters:
+    - user (UserCreate): The user data to create, including a plaintext password.
+    - db (Session): The database session.
+
+    Returns:
+    - UserOut: The created user object with the hashed password.
+    """
     hashed_password: str = utils.hash(user.password)
     user.password = hashed_password
 
@@ -29,6 +39,19 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
 
 @router.get("/{id}", response_model=UserOut)
 def get_user(id: int, db: Session = Depends(get_db)):
+    """
+    Retrieves a user by its ID.
+
+    Parameters:
+    - id (int): The ID of the user to retrieve.
+    - db (Session): The database session.
+
+    Returns:
+    - UserOut: The user object.
+
+    Raises:
+    - HTTPException: If the user with the given ID does not exist.
+    """
     user: models.User = db.query(models.User).filter(models.User.id == id).first()
 
     if not user:
