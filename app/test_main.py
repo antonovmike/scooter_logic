@@ -118,7 +118,24 @@ def test_low_battery_status(test_scooter, test_non_employee_user):
     assert response.status_code == 200
     assert response.json() == {"message": f"Scooter {test_scooter.id}: Low battery"}
 
-def test_battery_below_zero(test_scooter, test_non_employee_user):
+def test_battery_below_zero():
     scooter = ScooterLogic(status=ScooterStatus.AVAILABLE, battery=Battery(level=100))
     scooter.decrease_battery(110)
     assert scooter.get_battery_level() == 0
+
+
+def test_rent_already_rented_scooter(test_scooter, test_non_employee_user):
+    non_employee_token = oauth2.create_access_token(data={"user_id": test_non_employee_user.id, "is_user_employee": False})
+    response = client.get(f"/rent/rent/{test_scooter.id}", headers={"Authorization": f"Bearer {non_employee_token}"})
+    assert response.status_code == 200
+    assert response.json() == {"message": f"Scooter {test_scooter.id} is now rented"}
+
+    response = client.get(f"/rent/rent/{test_scooter.id}", headers={"Authorization": f"Bearer {non_employee_token}"})
+    assert response.status_code == 400
+    assert response.json() == {"detail": f"Scooter is not available"}
+
+def test_rent_nonexistent_scooter(test_non_employee_user):
+    non_employee_token = oauth2.create_access_token(data={"user_id": test_non_employee_user.id, "is_user_employee": False})
+    response = client.get("/rent/rent/9999", headers={"Authorization": f"Bearer {non_employee_token}"})
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Scooter not found"}

@@ -11,7 +11,7 @@ from scooter.utils import ScooterStatus
 
 router = APIRouter(
     prefix="/rent",
-    tags=['Rent'] # Adds headers to documentation http://127.0.0.1:8000/docs
+    tags=['Rent'] # Documentation header http://127.0.0.1:8000/docs
 )
 
 
@@ -164,6 +164,9 @@ def get_scooter_and_check_availability(db: Session, scooter_id: int, current_use
 
     battery = Battery(level=scooter.battery_level)
     scooter_logic: ScooterLogic = ScooterLogic(scooter.status, battery)
+
+    if not scooter_logic.is_available(scooter):
+        raise HTTPException(status_code=400, detail=f"Scooter is not available")
 
     return scooter, scooter_logic
 
