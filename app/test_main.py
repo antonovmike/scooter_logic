@@ -91,6 +91,11 @@ def test_service(test_scooter, test_employee_user):
     assert response.status_code == 200
     assert response.json() == {"message": f"Scooter {test_scooter.id} is now in service"}
 
+def test_rent_unauthorized_user(test_scooter):
+    response = client.get(f"/rent/rent/{test_scooter.id}")
+    assert response.status_code == 401
+    assert response.json() == {"detail": "Not authenticated"}
+
 def test_service_non_employee(test_scooter, test_non_employee_user):
     """Tests that a non-employee user cannot service a scooter"""
 
@@ -139,3 +144,19 @@ def test_rent_nonexistent_scooter(test_non_employee_user):
     response = client.get("/rent/rent/9999", headers={"Authorization": f"Bearer {non_employee_token}"})
     assert response.status_code == 404
     assert response.json() == {"detail": "Scooter not found"}
+
+def test_update_scooter_status_and_battery(test_scooter, test_employee_user):
+    employee_token = oauth2.create_access_token(data={"user_id": test_employee_user.id, "is_user_employee": True})
+
+    initial_status = test_scooter.status
+
+    response = client.get(f"/rent/service/{test_scooter.id}", headers={"Authorization": f"Bearer {employee_token}"})
+    assert response.status_code == 200
+    assert response.json() == {"message": f"Scooter {test_scooter.id} is now in service"}
+
+    db = SessionLocal()
+
+    update_scooter = db.query(Scooter).filter(Scooter.id == test_scooter.id).first()
+
+    assert update_scooter.status != initial_status
+    assert update_scooter.battery_level == 100
