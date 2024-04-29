@@ -8,7 +8,7 @@ from .database import Base, SQLALCHEMY_DATABASE_URL
 from app import oauth2
 from app.main import app
 from app.models import Scooter, User
-from scooter.scooter import ScooterStatus
+from scooter.scooter import ScooterStatus, Battery, Scooter as ScooterLogic
 
 client = TestClient(app)
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
@@ -104,3 +104,21 @@ def test_service_non_employee(test_scooter, test_non_employee_user):
 def test_user_status(test_non_employee_user, test_employee_user):
     assert test_non_employee_user.is_user_employee is False
     assert test_employee_user.is_user_employee is True
+
+def test_low_battery_status(test_scooter, test_non_employee_user):
+    test_scooter.battery_level = 10
+
+    db = SessionLocal()
+    db.query(Scooter).filter(Scooter.id == test_scooter.id).update({Scooter.battery_level: test_scooter.battery_level})
+    db.commit()
+
+    non_employee_token = oauth2.create_access_token(data={"user_id": test_non_employee_user.id, "is_user_employee": False})
+    response = client.get(f"/rent/free/{test_scooter.id}", headers={"Authorization": f"Bearer {non_employee_token}"})
+
+    assert response.status_code == 200
+    assert response.json() == {"message": f"Scooter {test_scooter.id}: Low battery"}
+
+def test_battery_below_zero(test_scooter, test_non_employee_user):
+    scooter = ScooterLogic(status=ScooterStatus.AVAILABLE, battery=Battery(level=100))
+    scooter.decrease_battery(110)
+    assert scooter.get_battery_level() == 0
