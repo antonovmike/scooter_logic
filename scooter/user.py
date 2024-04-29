@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from scooter.rental_system import RentType, RentalSystem
-from scooter.scooter import Scooter, ScooterStatusChecker
+from scooter.scooter import Battery, Scooter, ScooterStatusChecker
 from logging_setup import log
 
 
@@ -56,7 +56,7 @@ class Client(UserInterface):
         Returns:
         - bool: True if the scooter was taken successfully, False otherwise.
         """
-        if scooter.get_battery_level() >= scooter.battery.battery_crytical:
+        if scooter.get_battery_level() >= Battery.battery_low(scooter.get_battery_level()):
             rental_type = self.rental_system.determine_rental_type(self.user_is_employee)
             if self._take_scooter(
                     scooter, status_checker, rental_type, 

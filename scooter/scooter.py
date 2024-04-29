@@ -21,9 +21,13 @@ class ScooterStatus:
 
 class Battery:
     """Represents a scooter battery."""
-    def __init__(self, level=100, battery_crytical=20):
+    def __init__(self, level=100):
         self.level = level
-        self.battery_crytical = battery_crytical
+
+    @staticmethod
+    def battery_low(level):
+        """Returns whether the battery level is low."""
+        return level <= 20
 
     def charge(self):
         """Charges the battery to 100%."""
@@ -40,7 +44,7 @@ class Battery:
         self.level -= percentage
         if self.level < 0:
             self.level = 0
-        if self.level <= self.battery_crytical:
+        if self.level <= self.battery_low(self.level):
             print(f"! Battery level = {self.level}%")
 
     def get_level(self):
@@ -55,7 +59,7 @@ class Battery:
 
 class Scooter:
     """Represents a scooter."""
-    def __init__(self, status, battery: Battery):
+    def __init__(self, status: str, battery: Battery):
         self.status = status
         self.battery = battery
         self.logger = log
@@ -76,7 +80,7 @@ class Scooter:
         self.status = new_status
         self.logger.info(f"Scooter status changed to {new_status}")
 
-        if self.battery.get_level() <= self.battery.battery_crytical:
+        if self.battery.get_level() <= self.battery.battery_low(self.battery.level):
             self.status = ScooterStatus.LOW_BATTERY
 
         return self.status
@@ -91,10 +95,10 @@ class Scooter:
         Returns:
         - bool: True if the scooter is available, False otherwise.
         """
-        if self.get_battery_level() <= self.battery.battery_crytical:
-            return self.status == ScooterStatus.LOW_BATTERY
-        elif self.status != ScooterStatus.RENTED:
-            return self.status == ScooterStatus.AVAILABLE
+        if self.status == ScooterStatus.AVAILABLE:
+            return True
+        else:
+            return False
 
     def get_battery_level(self):
         """Returns the current battery level."""
@@ -118,13 +122,13 @@ class Scooter:
 class CurrentStatus(ABC):
     """Abstract class representing the current status of a scooter."""
     @abstractmethod
-    def check_status(self, scooter):
+    def check_status(self, scooter: Scooter):
         pass
 
 
 class ScooterStatusChecker(CurrentStatus):
     """Checks the current status of the scooter."""
-    def check_status(self, scooter):
+    def check_status(self, scooter: Scooter):
         """
         Checks the current status of the scooter.
 

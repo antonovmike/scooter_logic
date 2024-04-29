@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app import oauth2
 from app.database import get_db
 from app.models import Scooter, ScooterLog, User
+from logging_setup import log
 from scooter.scooter import Battery, ScooterStatus, Scooter as ScooterLogic
 from scooter.utils import ScooterStatus
 
@@ -35,9 +36,13 @@ async def rent(scooter_id: int, db: Session = Depends(get_db), current_user: int
     Raises:
     - HTTPException: If the scooter battery level is too low or if the scooter is not available.
     """
+    # print("RENT")
     scooter, scooter_logic = get_scooter_and_check_availability(db, scooter_id, current_user)
+    print("RENT")
+    print("scooter", scooter)
+    print("scooter_logic", scooter_logic)
 
-    if scooter_logic.battery.get_level() <= scooter_logic.battery.battery_crytical:
+    if scooter_logic.battery.get_level() <= scooter_logic.battery.battery_low(scooter_logic.battery.get_level()):
         raise HTTPException(status_code=400, detail="Scooter battery level is too low to rent")
 
     update_scooter_status_and_battery(db, scooter, scooter_logic, ScooterStatus.RENTED, current_user)
@@ -67,9 +72,18 @@ async def service(
     """
     scooter, scooter_logic = get_scooter_and_check_availability(db, scooter_id, current_user)
 
-    if current_user.is_user_employee:
-        update_scooter_status_and_battery(db, scooter, scooter_logic, ScooterStatus.SERVICE, current_user)
-        return {"message": f"Scooter {scooter_id} is now in service"}
+    user_status = db.query(User).filter(User.id == current_user.id).first().is_user_employee
+
+    if user_status:
+        print("scooter.status", scooter.status)
+        if scooter.status == ScooterStatus.SERVICE:
+            return {"message": f"Scooter {scooter_id} is already in service"}
+        else:
+            # Updates Scooter log only
+            update_scooter_status_and_battery(db, scooter, scooter_logic, ScooterStatus.SERVICE, current_user)
+            scooter.status = ScooterStatus.SERVICE
+            db.commit()
+            return {"message": f"Scooter {scooter_id} is now in service"}
     else:
         return {"message": f"You are not an employee"}
 
@@ -90,7 +104,7 @@ async def free(scooter_id: int, db: Session = Depends(get_db), current_user: int
     Raises:
     - HTTPException: If the scooter is not found or if its status cannot be changed.
     """
-    scooter = db.query(Scooter).filter(Scooter.id == scooter_id).first()
+    scooter: Scooter = db.query(Scooter).filter(Scooter.id == scooter_id).first()
 
     if not scooter:
         raise HTTPException(status_code=404, detail="Scooter not found")
@@ -98,7 +112,12 @@ async def free(scooter_id: int, db: Session = Depends(get_db), current_user: int
     if scooter.status == ScooterStatus.LOST:
         raise HTTPException(status_code=400, detail=f"Impossible to change scooter's status: {scooter.status}")
 
-    scooter.status = ScooterStatus.AVAILABLE
+    if Battery.battery_low(scooter.battery_level):
+        scooter.status = ScooterStatus.LOW_BATTERY
+        db.commit()
+        return {"message": f"Scooter {scooter_id}: Low battery"}
+    else:
+        scooter.status = ScooterStatus.AVAILABLE
     db.commit()
 
     add_to_scooter_log(db, scooter_id, scooter.status, current_user.id)
@@ -143,17 +162,22 @@ def get_scooter_and_check_availability(db: Session, scooter_id: int, current_use
     - HTTPException: If the scooter is not found, if its status is lost, or if it is not available.
     """
     scooter: Scooter = db.query(Scooter).filter(Scooter.id == scooter_id).first()
+    print("scooter", scooter.status)
     if not scooter:
         raise HTTPException(status_code=404, detail="Scooter not found")
 
-    if scooter.status == ScooterStatus.LOST:
-        raise HTTPException(status_code=400, detail=f"Impossible to change scooter's status: {scooter.status}")
+    # if scooter.status == ScooterStatus.LOST or scooter.status == ScooterStatus.RENTED:
+    #     raise HTTPException(status_code=400, detail=f"Scooter is not available: {scooter.status}")
 
     battery = Battery(level=scooter.battery_level)
     scooter_logic: ScooterLogic = ScooterLogic(scooter.status, battery)
 
-    if not scooter_logic.is_available(current_user.is_user_employee):
-        raise HTTPException(status_code=400, detail=f"Scooter is not available: {scooter.status}")
+    # user_status = db.query(User).filter(User.id == current_user.id).first().is_user_employee
+
+    # print("scooter_logic.is_available(user_status)", scooter_logic.is_available(user_status))
+
+    # if not scooter_logic.is_available(user_status):
+    #     raise HTTPException(status_code=400, detail=f"Scooter is not available: {scooter.status}")
 
     return scooter, scooter_logic
 
@@ -164,7 +188,7 @@ def update_scooter_status_and_battery(
         scooter_logic: ScooterLogic, 
         new_status: ScooterStatus, 
         current_user: int, 
-        battery_change: int = 0
+        battery_change: int = 20
         ):
     """
     Updates the status and battery level of a scooter.
