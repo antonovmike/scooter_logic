@@ -66,7 +66,7 @@ class TestEmployee(unittest.TestCase):
     def setUp(self):
         self.employee = Employee()
         self.battery = Battery(100)
-        self.scooter = Scooter(ScooterStatus.SERVICE, self.battery)
+        self.scooter = Scooter(ScooterStatus.AVAILABLE, self.battery)
         self.status_checker = ScooterStatusChecker()
 
     def test_service_scooter(self):
