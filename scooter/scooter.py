@@ -3,9 +3,6 @@ from abc import ABC, abstractmethod
 from logging_setup import log
 
 
-# battery_crytical = 20
-
-
 class InvalidScooterStatusError(Exception):
     """Raised when an invalid scooter status is attempted to be set."""
 
@@ -75,15 +72,14 @@ class Scooter:
         """
         if new_status not in ScooterStatus.__dict__.values():
             raise InvalidScooterStatusError(f"Invalid status: {new_status}")
+        
         self.status = new_status
         self.logger.info(f"Scooter status changed to {new_status}")
+
         if self.battery.get_level() <= self.battery.battery_crytical:
             self.status = ScooterStatus.LOW_BATTERY
-            return self.status
-        if new_status == ScooterStatus.AVAILABLE:
-            return self.status
-        else:
-            return self.status
+
+        return self.status
 
     def is_available(self, user_is_employee: bool):
         """
