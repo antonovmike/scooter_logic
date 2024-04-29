@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from scooter.rental_system import RentalSystem
-from scooter.scooter import battery_crytical
+from scooter.rental_system import RentType, RentalSystem
+from scooter.scooter import Scooter, ScooterStatusChecker, battery_crytical
 from logging_setup import log
 
 
@@ -12,8 +12,8 @@ class UserInterface(ABC):
         pass
 
     def _take_scooter(
-            self, scooter, status_checker, rental_type, 
-            action_description, user_is_employee: bool
+            self, scooter: Scooter, status_checker: ScooterStatusChecker, rental_type: RentType, 
+            action_description: str, user_is_employee: bool
             ):
         try:
             if status_checker:
@@ -35,7 +35,7 @@ class Client(UserInterface):
         self.logger = log
         self.user_is_employee = False
 
-    def take_scooter(self, scooter, status_checker) -> bool:
+    def take_scooter(self, scooter: Scooter, status_checker: ScooterStatusChecker) -> bool:
         if scooter.get_battery_level() >= battery_crytical:
             rental_type = self.rental_system.determine_rental_type(self.user_is_employee)
             if self._take_scooter(
@@ -56,7 +56,7 @@ class Employee(UserInterface):
         self.logger = log
         self.user_is_employee = True
 
-    def take_scooter(self, scooter, status_checker) -> bool:
+    def take_scooter(self, scooter: Scooter, status_checker: ScooterStatusChecker) -> bool:
         rental_type = self.rental_system.determine_rental_type(self.user_is_employee)
         if self._take_scooter(
                 scooter, status_checker, rental_type, 

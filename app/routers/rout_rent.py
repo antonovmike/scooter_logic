@@ -73,7 +73,7 @@ def add_to_scooter_log(db: Session, scooter_id: int, action_type: str, user_id: 
 
 
 def get_scooter_and_check_availability(db: Session, scooter_id: int, current_user: int):
-    scooter = db.query(Scooter).filter(Scooter.id == scooter_id).first()
+    scooter: Scooter = db.query(Scooter).filter(Scooter.id == scooter_id).first()
     if not scooter:
         raise HTTPException(status_code=404, detail="Scooter not found")
 
@@ -81,7 +81,7 @@ def get_scooter_and_check_availability(db: Session, scooter_id: int, current_use
         raise HTTPException(status_code=400, detail=f"Impossible to change scooter's status: {scooter.status}")
 
     battery = Battery(level=scooter.battery_level)
-    scooter_logic = ScooterLogic(scooter.status, battery)
+    scooter_logic: ScooterLogic = ScooterLogic(scooter.status, battery)
 
     if not scooter_logic.is_available(current_user.is_user_employee):
         raise HTTPException(status_code=400, detail=f"Scooter is not available: {scooter.status}")
@@ -94,7 +94,7 @@ def update_scooter_status_and_battery(
         scooter: Scooter, 
         scooter_logic: ScooterLogic, 
         new_status: ScooterStatus, 
-        current_user, 
+        current_user: int, 
         battery_change: int = 0
         ):
     try:
