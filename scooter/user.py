@@ -97,3 +97,22 @@ class Employee(UserInterface):
             return scooter.status
         else:
             return scooter.status
+
+
+class Repairer(UserInterface):
+    """Represents a repairer in the system."""
+    def __init__(self):
+        self.rental_system = RentalSystem(scooter=None)
+        self.logger = log
+        self.user_is_employee = True
+
+        def take_scooter(self, scooter: Scooter, status_checker: ScooterStatusChecker) -> bool:
+            rental_type = self.rental_system.determine_rental_type(self.user_is_employee)
+            if self._take_scooter(
+                    scooter, status_checker, rental_type, 
+                    "Scooter repaired by repairer", self.user_is_employee
+                    ):
+                scooter.charge_battery()
+                return scooter.status
+            else:
+                return scooter.status

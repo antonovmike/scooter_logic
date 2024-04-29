@@ -84,6 +84,28 @@ async def service(
         return {"message": f"You are not an employee"}
 
 
+@router.get("/repair/{scooter_id}")
+def repair(scooter_id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+    """
+    Repairs a scooter by updating its status from "malfunction" to "available".
+    """
+    scooter: Scooter = db.query(Scooter).filter(Scooter.id == scooter_id).first()
+
+    if not scooter:
+        raise HTTPException(status_code=404, detail="Scooter not found")
+
+    if scooter.status == ScooterStatus.LOST:
+        raise HTTPException(status_code=400, detail=f"Impossible to change scooter's status: {scooter.status}")
+    
+    if scooter.status != ScooterStatus.MALFUNCTION:
+        return {"message": f"Scooter {scooter_id} is not in malfunction"}
+        # raise InvalidScooterStatusError(f"Impossible to change scooter's status: {scooter.status}")
+
+    scooter.status = ScooterStatus.AVAILABLE
+    db.commit()
+    return {"message": f"Scooter {scooter_id} is now available"}
+
+
 @router.get("/free/{scooter_id}")
 async def free(scooter_id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
     """
