@@ -93,10 +93,8 @@ class Scooter:
         """
         if self.get_battery_level() <= self.battery.battery_crytical:
             return self.status == ScooterStatus.LOW_BATTERY
-        elif user_is_employee and self.status != ScooterStatus.RENTED:
+        elif self.status != ScooterStatus.RENTED:
             return self.status == ScooterStatus.AVAILABLE
-        elif not user_is_employee:
-            return self.status == ScooterStatus.AVAILABLE and self.get_battery_level() >= self.battery.battery_crytical
 
     def get_battery_level(self):
         """Returns the current battery level."""
