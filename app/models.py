@@ -23,7 +23,8 @@ class User(Base):
     name = Column(String, nullable=False)
     email = Column(String, nullable=False, unique=True)
     password = Column(String, nullable=False)
-    is_user_employee = Column(Boolean, nullable=False)
+    is_user_employee = Column(Boolean, nullable=False, default=False)
+    is_employee_repairer = Column(Boolean, nullable=False, default=False)
     created_at = Column(TIMESTAMP(timezone=True), 
                         server_default=text('now()'), nullable=False)
 

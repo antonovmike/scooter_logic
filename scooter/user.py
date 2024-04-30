@@ -44,6 +44,7 @@ class Client(UserInterface):
         self.rental_system = RentalSystem(scooter=None)
         self.logger = log
         self.user_is_employee = False
+        self.is_employee_repairer = False
 
     def take_scooter(self, scooter: Scooter, status_checker: ScooterStatusChecker) -> bool:
         """
@@ -76,6 +77,7 @@ class Employee(UserInterface):
         self.rental_system = RentalSystem(scooter=None)
         self.logger = log
         self.user_is_employee = True
+        self.is_employee_repairer = False
 
     def take_scooter(self, scooter: Scooter, status_checker: ScooterStatusChecker) -> bool:
         """
@@ -105,6 +107,7 @@ class Repairer(UserInterface):
         self.rental_system = RentalSystem(scooter=None)
         self.logger = log
         self.user_is_employee = True
+        self.is_employee_repairer = True
 
     def take_scooter(self, scooter: Scooter, status_checker: ScooterStatusChecker) -> bool:
         rental_type = self.rental_system.determine_rental_type(self.user_is_employee)

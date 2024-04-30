@@ -17,6 +17,7 @@ class UserBase(BaseModel):
     email: EmailStr
     password: str
     is_user_employee: bool = False
+    is_employee_repairer: bool = False
 
 class UserCreate(UserBase):
     """User creation model.

@@ -39,7 +39,7 @@ def test_non_employee_user():
     """Creates a test non-employee user in the database."""
     db = SessionLocal()
 
-    non_employee_user = User(id=44, name="customer", password="customer", email="customer", is_user_employee=False)
+    non_employee_user = User(id=44, name="customer", password="customer", email="customer")
     db.add(non_employee_user)
     db.commit()
     db.refresh(non_employee_user)
