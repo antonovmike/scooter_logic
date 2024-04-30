@@ -90,6 +90,7 @@ def repair(scooter_id: int, db: Session = Depends(get_db), current_user: int = D
     Repairs a scooter by updating its status from "malfunction" to "available".
     """
     scooter: Scooter = db.query(Scooter).filter(Scooter.id == scooter_id).first()
+    user_status = db.query(User).filter(User.id == current_user.id).first().is_user_employee
 
     if not scooter:
         raise HTTPException(status_code=404, detail="Scooter not found")
@@ -97,13 +98,19 @@ def repair(scooter_id: int, db: Session = Depends(get_db), current_user: int = D
     if scooter.status == ScooterStatus.LOST:
         raise HTTPException(status_code=400, detail=f"Impossible to change scooter's status: {scooter.status}")
     
-    if scooter.status != ScooterStatus.MALFUNCTION:
-        return {"message": f"Scooter {scooter_id} is not in malfunction"}
-        # raise InvalidScooterStatusError(f"Impossible to change scooter's status: {scooter.status}")
-
-    scooter.status = ScooterStatus.AVAILABLE
-    db.commit()
-    return {"message": f"Scooter {scooter_id} is now available"}
+    if user_status:
+        if scooter.status == ScooterStatus.SERVICE:
+            return {"message": f"Scooter {scooter_id} is already in service"}
+        else:
+            if scooter.status != ScooterStatus.MALFUNCTION:
+                return {"message": f"Scooter {scooter_id} is not in malfunction"}
+                # raise InvalidScooterStatusError(f"Impossible to change scooter's status: {scooter.status}")
+            scooter.status = ScooterStatus.AVAILABLE
+            scooter.battery_level = 100
+            db.commit()
+            return {"message": f"Scooter {scooter_id} is now in available"}
+    else:
+        return {"message": f"You are not an employee"}
 
 
 @router.get("/free/{scooter_id}")
