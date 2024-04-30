@@ -107,11 +107,28 @@ def test_service(test_scooter, test_employee_user):
     assert response.status_code == 200
     assert response.json() == {"message": f"Scooter {test_scooter.id} is now in service"}
 
-def test_repair(test_scooter, test_repairer_user):
+def test_repair_not_malfunction(test_scooter, test_repairer_user):
     empoyee_token = oauth2.create_access_token(data={"user_id": test_repairer_user.id, "is_employee_repairer": True})
     response = client.get(f"/rent/repair/{test_scooter.id}", headers={"Authorization": f"Bearer {empoyee_token}"})
     assert response.status_code == 200
     assert response.json() == {"message": f"Scooter {test_scooter.id} is not in malfunction"}
+
+def test_repair_malfunction(test_scooter, test_repairer_user):
+    """Tests the case when scooter is MALFUNCTION"""
+    battery = Battery(level=100)
+    scooter_logic = ScooterLogic(status=test_scooter.status, battery=battery)
+
+    scooter_logic.change_status(ScooterStatus.MALFUNCTION)
+    db = SessionLocal()
+    db_scooter = db.query(Scooter).filter(Scooter.id == test_scooter.id).first()
+    db_scooter.status = ScooterStatus.MALFUNCTION
+    db.commit()
+
+    empoyee_token = oauth2.create_access_token(data={"user_id": test_repairer_user.id, "is_employee_repairer": True})
+    response = client.get(f"/rent/repair/{test_scooter.id}", headers={"Authorization": f"Bearer {empoyee_token}"})
+    assert response.status_code == 200
+    assert response.json() == {"message": f"Scooter {test_scooter.id} is now in available"}
+
 
 def test_rent_unauthorized_user(test_scooter):
     response = client.get(f"/rent/rent/{test_scooter.id}")
