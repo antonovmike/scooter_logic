@@ -66,6 +66,22 @@ def test_employee_user():
     db.commit()
     db.close()
 
+@pytest.fixture(scope="function")
+def test_repairer_user():
+    """Creates a test repairer user in the database."""
+    db = SessionLocal()
+
+    repairer_user = User(id=66, name="repairer", password="repairer", email="repairer", is_user_employee=True, is_employee_repairer=True)
+    db.add(repairer_user)
+    db.commit()
+    db.refresh(repairer_user)
+
+    yield repairer_user
+
+    db.delete(repairer_user)
+    db.commit()
+    db.close()
+
 
 def test_root():
     response = client.get("/")
@@ -90,6 +106,12 @@ def test_service(test_scooter, test_employee_user):
     response = client.get(f"/rent/service/{test_scooter.id}", headers={"Authorization": f"Bearer {empoyee_token}"})
     assert response.status_code == 200
     assert response.json() == {"message": f"Scooter {test_scooter.id} is now in service"}
+
+def test_repair(test_scooter, test_repairer_user):
+    empoyee_token = oauth2.create_access_token(data={"user_id": test_repairer_user.id, "is_employee_repairer": True})
+    response = client.get(f"/rent/repair/{test_scooter.id}", headers={"Authorization": f"Bearer {empoyee_token}"})
+    assert response.status_code == 200
+    assert response.json() == {"message": f"Scooter {test_scooter.id} is not in malfunction"}
 
 def test_rent_unauthorized_user(test_scooter):
     response = client.get(f"/rent/rent/{test_scooter.id}")
