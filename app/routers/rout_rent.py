@@ -90,7 +90,7 @@ def repair(scooter_id: int, db: Session = Depends(get_db), current_user: int = D
     Repairs a scooter by updating its status from "malfunction" to "available".
     """
     scooter: Scooter = db.query(Scooter).filter(Scooter.id == scooter_id).first()
-    user_status = db.query(User).filter(User.id == current_user.id).first().is_user_employee
+    employee_status = db.query(User).filter(User.id == current_user.id).first().is_employee_repairer
 
     if not scooter:
         raise HTTPException(status_code=404, detail="Scooter not found")
@@ -98,7 +98,7 @@ def repair(scooter_id: int, db: Session = Depends(get_db), current_user: int = D
     if scooter.status == ScooterStatus.LOST:
         raise HTTPException(status_code=400, detail=f"Impossible to change scooter's status: {scooter.status}")
     
-    if user_status:
+    if employee_status:
         if scooter.status == ScooterStatus.SERVICE:
             return {"message": f"Scooter {scooter_id} is already in service"}
         else:
@@ -110,7 +110,7 @@ def repair(scooter_id: int, db: Session = Depends(get_db), current_user: int = D
             db.commit()
             return {"message": f"Scooter {scooter_id} is now in available"}
     else:
-        return {"message": f"You are not an employee"}
+        return {"message": f"You are not a repairer"}
 
 
 @router.get("/free/{scooter_id}")
