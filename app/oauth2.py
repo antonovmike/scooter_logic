@@ -5,15 +5,16 @@ from jose import JWSError, jwt
 from sqlalchemy.orm import Session
 
 from . import database, models, schemas
+from .config import settings
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login') # Depends on router @router.post('/login')
 
 # https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/#hash-and-verify-the-passwords
 # to get a string like this run:
 # openssl rand -hex 32
-SECRET_KEY = "a4e3563f88551adc11724ca01168cbd99d543f31480879059be0253590f3ec69"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+SECRET_KEY = settings.secret_key
+ALGORITHM = settings.algorithm
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
 
 
 def create_access_token(data: dict):
