@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from scooter.scooter import ScooterStatus
+from scooter.scooter import ScooterStatus, Scooter
 
 
 class RentType:
@@ -28,7 +28,7 @@ class RentalSystem:
     def __init__(self, scooter):
         self.scooter = scooter
 
-    def determine_rental_type(self, user_is_employee):
+    def determine_rental_type(self, user_is_employee: bool):
         """
         Determines the rental type based on the user's status and the current time.
 
@@ -38,7 +38,7 @@ class RentalSystem:
         Returns:
         - str: The rental type (REGULAR, DISCOUNTED, or SERVICED).
         """
-        current_hour = datetime.now().hour
+        current_hour: int = datetime.now().hour
         if user_is_employee:
             return RentType.SERVICED
         elif 6 <= current_hour < 18:
@@ -46,7 +46,7 @@ class RentalSystem:
         else:
             return RentType.DISCOUNTED
 
-    def create_rental_instance(self, rental_type, scooter):
+    def create_rental_instance(self, rental_type: RentType, scooter: Scooter):
         """
         Creates a rental instance based on the rental type.
 

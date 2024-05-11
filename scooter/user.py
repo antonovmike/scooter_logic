@@ -7,7 +7,7 @@ from logging_setup import log
 
 class UserInterface(ABC):
     @abstractmethod
-    def take_scooter(self, scooter, status_checker):
+    def take_scooter(self, scooter: Scooter, status_checker: bool):
         """Blocks the ability to rent or service"""
         pass
 

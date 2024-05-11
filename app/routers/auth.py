@@ -24,7 +24,7 @@ def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Session =
 
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Invalid credentials")
-    
+
     if not utils.verify(user_credentials.password, user.password):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Invalid credentials")
 

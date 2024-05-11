@@ -14,8 +14,8 @@ def hash(password: str):
     - str: The hashed password.
     """
     return pwd_context.hash(password)
-
-def verify(plain_password, hashed_password):
+# hashed_password: Column[str]
+def verify(plain_password: str, hashed_password: str):
     """
     Verifies a password against a hashed password.
 

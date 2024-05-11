@@ -25,7 +25,7 @@ class Battery:
         self.level = level
 
     @staticmethod
-    def battery_low(level):
+    def battery_low(level: int):
         """Returns whether the battery level is low."""
         return level <= 20
 
@@ -34,7 +34,7 @@ class Battery:
         self.level = 100
         print("Battery fully charged")
 
-    def decrease(self, percentage):
+    def decrease(self, percentage: int):
         """
         Decreases the battery level by the specified percentage.
 
@@ -108,7 +108,7 @@ class Scooter:
         """Charges the scooter battery."""
         self.battery.charge()
 
-    def decrease_battery(self, percentage):
+    def decrease_battery(self, percentage: int):
         """
         Decreases the scooter battery by the specified percentage.
 
