@@ -8,7 +8,7 @@ from .database import Base, SQLALCHEMY_DATABASE_URL
 from app import oauth2
 from app.main import app
 from app.models import Scooter, User
-from scooter.scooter import ScooterStatus, Scooter as ScooterLogic
+from scooter.scooter import ScooterStatus, Battery, Scooter as ScooterLogic
 
 client = TestClient(app)
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
@@ -115,7 +115,8 @@ def test_repair_not_malfunction(test_scooter, test_repairer_user):
 
 def test_repair_malfunction(test_scooter, test_repairer_user):
     """Tests the case when scooter is MALFUNCTION"""
-    scooter_logic = ScooterLogic(status=test_scooter.status)
+    battery = Battery(level=100)
+    scooter_logic = ScooterLogic(status=test_scooter.status, battery=battery)
 
     scooter_logic.change_status(ScooterStatus.MALFUNCTION)
     db = SessionLocal()
@@ -162,7 +163,7 @@ def test_low_battery_status(test_scooter, test_non_employee_user):
     assert response.json() == {"message": f"Scooter {test_scooter.id}: Low battery"}
 
 def test_battery_below_zero():
-    scooter = ScooterLogic(status=ScooterStatus.AVAILABLE)
+    scooter = ScooterLogic(status=ScooterStatus.AVAILABLE, battery=Battery(level=100))
     scooter.decrease_battery(110)
     assert scooter.get_battery_level() == 0
 

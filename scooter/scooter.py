@@ -5,7 +5,6 @@ from logging_setup import log
 
 class InvalidScooterStatusError(Exception):
     """Raised when an invalid scooter status is attempted to be set."""
-
     pass
 
 
@@ -59,20 +58,10 @@ class Battery:
 
 class Scooter:
     """Represents a scooter."""
-    def __init__(self, status: str):
+    def __init__(self, status: str, battery: Battery):
         self.status = status
-        self.battery = self.create_battery()
+        self.battery = battery
         self.logger = log
-
-    def create_battery(self) -> Battery:
-        """
-        Creates a new battery for the scooter.
-
-        Returns:
-        - Battery: The created battery.
-        """
-        battery = Battery()
-        return battery
 
     def change_status(self, new_status):
         """

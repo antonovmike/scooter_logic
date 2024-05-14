@@ -1,8 +1,4 @@
-import psycopg2
-import time
-
 from fastapi import FastAPI
-from psycopg2.extras import RealDictCursor
 
 from . import models
 from .database import engine
