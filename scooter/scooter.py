@@ -59,10 +59,20 @@ class Battery:
 
 class Scooter:
     """Represents a scooter."""
-    def __init__(self, status: str, battery: Battery):
+    def __init__(self, status: str):
         self.status = status
-        self.battery = battery
+        self.battery = self.create_battery()
         self.logger = log
+
+    def create_battery(self) -> Battery:
+        """
+        Creates a new battery for the scooter.
+
+        Returns:
+        - Battery: The created battery.
+        """
+        battery = Battery()
+        return battery
 
     def change_status(self, new_status):
         """

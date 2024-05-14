@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app import oauth2
 from app.database import get_db
 from app.models import Scooter, ScooterLog, User
-from logging_setup import log
+# from logging_setup import log
 from scooter.scooter import Battery, ScooterStatus, Scooter as ScooterLogic
 from scooter.utils import ScooterStatus
 
@@ -191,8 +191,7 @@ def get_scooter_and_check_availability(db: Session, scooter_id: int, current_use
     if not scooter:
         raise HTTPException(status_code=404, detail="Scooter not found")
 
-    battery = Battery(level=scooter.battery_level)
-    scooter_logic: ScooterLogic = ScooterLogic(scooter.status, battery)
+    scooter_logic: ScooterLogic = ScooterLogic(scooter.status)
 
     if not scooter_logic.is_available(scooter):
         raise HTTPException(status_code=400, detail=f"Scooter is not available")

@@ -8,8 +8,7 @@ from scooter.scooter import (
 from scooter.user import Client, Employee
 
 # Example Usage
-battery = Battery(100)
-scooter = Scooter(ScooterStatus.AVAILABLE, battery=battery)
+scooter = Scooter(ScooterStatus.AVAILABLE)
 client = Client()
 employee = Employee()
 status_checker = ScooterStatusChecker()
