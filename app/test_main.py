@@ -55,7 +55,8 @@ def test_employee_user():
     """Creates a test employee user in the database."""
     db = SessionLocal()
 
-    employee_user = User(id=55, name="employee", password="employee", email="employee", is_user_employee=True)
+    employee_user = User(id=55, name="employee", 
+        password="employee", email="employee", is_user_employee=True)
     db.add(employee_user)
     db.commit()
     db.refresh(employee_user)
@@ -71,7 +72,8 @@ def test_repairer_user():
     """Creates a test repairer user in the database."""
     db = SessionLocal()
 
-    repairer_user = User(id=66, name="repairer", password="repairer", email="repairer", is_user_employee=True, is_employee_repairer=True)
+    repairer_user = User(id=66, name="repairer", password="repairer", 
+        email="repairer", is_user_employee=True, is_employee_repairer=True)
     db.add(repairer_user)
     db.commit()
     db.refresh(repairer_user)
@@ -90,26 +92,34 @@ def test_root():
 
 
 def test_rent(test_scooter, test_non_employee_user):
-    non_employee_token = oauth2.create_access_token(data={"user_id": test_non_employee_user.id, "is_user_employee": False})
-    response = client.get(f"/rent/rent/{test_scooter.id}", headers={"Authorization": f"Bearer {non_employee_token}"})
+    non_employee_token = oauth2.create_access_token(
+        data={"user_id": test_non_employee_user.id, "is_user_employee": False})
+    response = client.get(f"/rent/rent/{test_scooter.id}", headers={
+        "Authorization": f"Bearer {non_employee_token}"})
     assert response.status_code == 200
     assert response.json() == {"message": f"Scooter {test_scooter.id} is now rented"}
 
 def test_free(test_scooter, test_non_employee_user):
-    non_employee_token = oauth2.create_access_token(data={"user_id": test_non_employee_user.id, "is_user_employee": False})
-    response = client.get(f"/rent/free/{test_scooter.id}", headers={"Authorization": f"Bearer {non_employee_token}"})
+    non_employee_token = oauth2.create_access_token(
+        data={"user_id": test_non_employee_user.id, "is_user_employee": False})
+    response = client.get(f"/rent/free/{test_scooter.id}", 
+        headers={"Authorization": f"Bearer {non_employee_token}"})
     assert response.status_code == 200
     assert response.json() == {"message": f"Scooter {test_scooter.id} is available"}
 
 def test_service(test_scooter, test_employee_user):
-    empoyee_token = oauth2.create_access_token(data={"user_id": test_employee_user.id, "is_user_employee": True})
-    response = client.get(f"/rent/service/{test_scooter.id}", headers={"Authorization": f"Bearer {empoyee_token}"})
+    empoyee_token = oauth2.create_access_token(
+        data={"user_id": test_employee_user.id, "is_user_employee": True})
+    response = client.get(f"/rent/service/{test_scooter.id}", 
+        headers={"Authorization": f"Bearer {empoyee_token}"})
     assert response.status_code == 200
     assert response.json() == {"message": f"Scooter {test_scooter.id} is now in service"}
 
 def test_repair_not_malfunction(test_scooter, test_repairer_user):
-    empoyee_token = oauth2.create_access_token(data={"user_id": test_repairer_user.id, "is_employee_repairer": True})
-    response = client.get(f"/rent/repair/{test_scooter.id}", headers={"Authorization": f"Bearer {empoyee_token}"})
+    empoyee_token = oauth2.create_access_token(
+        data={"user_id": test_repairer_user.id, "is_employee_repairer": True})
+    response = client.get(f"/rent/repair/{test_scooter.id}", 
+        headers={"Authorization": f"Bearer {empoyee_token}"})
     assert response.status_code == 200
     assert response.json() == {"message": f"Scooter {test_scooter.id} is not in malfunction"}
 
@@ -124,8 +134,10 @@ def test_repair_malfunction(test_scooter, test_repairer_user):
     db_scooter.status = ScooterStatus.MALFUNCTION
     db.commit()
 
-    empoyee_token = oauth2.create_access_token(data={"user_id": test_repairer_user.id, "is_employee_repairer": True})
-    response = client.get(f"/rent/repair/{test_scooter.id}", headers={"Authorization": f"Bearer {empoyee_token}"})
+    empoyee_token = oauth2.create_access_token(
+        data={"user_id": test_repairer_user.id, "is_employee_repairer": True})
+    response = client.get(f"/rent/repair/{test_scooter.id}", 
+        headers={"Authorization": f"Bearer {empoyee_token}"})
     assert response.status_code == 200
     assert response.json() == {"message": f"Scooter {test_scooter.id} is now in available"}
 
@@ -138,9 +150,11 @@ def test_rent_unauthorized_user(test_scooter):
 def test_service_non_employee(test_scooter, test_non_employee_user):
     """Tests that a non-employee user cannot service a scooter"""
 
-    non_employee_token = oauth2.create_access_token(data={"user_id": test_non_employee_user.id, "is_user_employee": False})
+    non_employee_token = oauth2.create_access_token(
+        data={"user_id": test_non_employee_user.id, "is_user_employee": False})
 
-    response = client.get(f"/rent/service/{test_scooter.id}", headers={"Authorization": f"Bearer {non_employee_token}"})
+    response = client.get(f"/rent/service/{test_scooter.id}", 
+        headers={"Authorization": f"Bearer {non_employee_token}"})
 
     assert response.status_code == 200
     assert response.json() == {"message": "You are not an employee"}
@@ -153,11 +167,14 @@ def test_low_battery_status(test_scooter, test_non_employee_user):
     test_scooter.battery_level = 10
 
     db = SessionLocal()
-    db.query(Scooter).filter(Scooter.id == test_scooter.id).update({Scooter.battery_level: test_scooter.battery_level})
+    db.query(Scooter).filter(Scooter.id == test_scooter.id).update(
+        {Scooter.battery_level: test_scooter.battery_level})
     db.commit()
 
-    non_employee_token = oauth2.create_access_token(data={"user_id": test_non_employee_user.id, "is_user_employee": False})
-    response = client.get(f"/rent/free/{test_scooter.id}", headers={"Authorization": f"Bearer {non_employee_token}"})
+    non_employee_token = oauth2.create_access_token(
+        data={"user_id": test_non_employee_user.id, "is_user_employee": False})
+    response = client.get(f"/rent/free/{test_scooter.id}", 
+        headers={"Authorization": f"Bearer {non_employee_token}"})
 
     assert response.status_code == 200
     assert response.json() == {"message": f"Scooter {test_scooter.id}: Low battery"}
@@ -169,27 +186,34 @@ def test_battery_below_zero():
 
 
 def test_rent_already_rented_scooter(test_scooter, test_non_employee_user):
-    non_employee_token = oauth2.create_access_token(data={"user_id": test_non_employee_user.id, "is_user_employee": False})
-    response = client.get(f"/rent/rent/{test_scooter.id}", headers={"Authorization": f"Bearer {non_employee_token}"})
+    non_employee_token = oauth2.create_access_token(
+        data={"user_id": test_non_employee_user.id, "is_user_employee": False})
+    response = client.get(f"/rent/rent/{test_scooter.id}", 
+        headers={"Authorization": f"Bearer {non_employee_token}"})
     assert response.status_code == 200
     assert response.json() == {"message": f"Scooter {test_scooter.id} is now rented"}
 
-    response = client.get(f"/rent/rent/{test_scooter.id}", headers={"Authorization": f"Bearer {non_employee_token}"})
+    response = client.get(f"/rent/rent/{test_scooter.id}", 
+        headers={"Authorization": f"Bearer {non_employee_token}"})
     assert response.status_code == 400
     assert response.json() == {"detail": f"Scooter is not available"}
 
 def test_rent_nonexistent_scooter(test_non_employee_user):
-    non_employee_token = oauth2.create_access_token(data={"user_id": test_non_employee_user.id, "is_user_employee": False})
-    response = client.get("/rent/rent/9999", headers={"Authorization": f"Bearer {non_employee_token}"})
+    non_employee_token = oauth2.create_access_token(
+        data={"user_id": test_non_employee_user.id, "is_user_employee": False})
+    response = client.get("/rent/rent/9999", 
+        headers={"Authorization": f"Bearer {non_employee_token}"})
     assert response.status_code == 404
     assert response.json() == {"detail": "Scooter not found"}
 
 def test_update_scooter_status_and_battery(test_scooter, test_employee_user):
-    employee_token = oauth2.create_access_token(data={"user_id": test_employee_user.id, "is_user_employee": True})
+    employee_token = oauth2.create_access_token(
+        data={"user_id": test_employee_user.id, "is_user_employee": True})
 
     initial_status = test_scooter.status
 
-    response = client.get(f"/rent/service/{test_scooter.id}", headers={"Authorization": f"Bearer {employee_token}"})
+    response = client.get(f"/rent/service/{test_scooter.id}", 
+        headers={"Authorization": f"Bearer {employee_token}"})
     assert response.status_code == 200
     assert response.json() == {"message": f"Scooter {test_scooter.id} is now in service"}
 

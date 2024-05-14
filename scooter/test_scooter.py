@@ -9,7 +9,10 @@ from scooter.scooter import (
     InvalidScooterStatusError,
 )
 from scooter.user import Client, Employee
-from scooter.rental_system import DiscountedRental, RegularRental, RentType, RentalSystem, ServiceRental
+from scooter.rental_system import (
+    DiscountedRental, RegularRental, 
+    RentType, RentalSystem, ServiceRental
+)
 
 
 class TestScooter(unittest.TestCase):
